@@ -4,6 +4,8 @@
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
 
+#include "entity.h"
+
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
@@ -29,6 +31,7 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
+	entity_manager_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
     
     /*demo setup*/
@@ -49,6 +52,8 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,gfc_vector2d(0,0));
+			
+			entity_manager_draw_all();
             
             //UI elements last
             gf2d_sprite_draw(
