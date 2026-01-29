@@ -1,0 +1,36 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\2DGameProj\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B9125EF0-5B36-4CF1-8712-17C068B5EF43}|2DGame\\2DGame.vcxproj|C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\game.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "game.c",
+              "DocumentMoniker": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\game.c",
+              "RelativeDocumentMoniker": "..\\src\\game.c",
+              "ToolTip": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\game.c",
+              "RelativeToolTip": "..\\src\\game.c",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAADsAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-01-29T05:25:01.284Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
