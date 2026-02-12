@@ -1,5 +1,8 @@
 #include "simple_logger.h"
 
+#include "gfc_types.h"
+#include "gf2d_sprite.h"
+
 #include "entity.h"
 
 typedef struct

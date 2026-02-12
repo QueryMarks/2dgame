@@ -18,7 +18,7 @@ typedef struct Entity_S
 	void (*update)(struct Entity_S* self);		/**<update function called after think function for acting on decisions made in think and result of interactions etc*/
 	void (*free)(struct Entity_S* self);		/**<clean up any custom allocated data*/
 	void* data;									/**<for ad hoc addition data for the entity*/
-}; Entity;
+}Entity;
 
 /**
  *	@brief Initializes the entity management system.
@@ -39,7 +39,7 @@ void entity_manager_close();
 *	@brief get a blank entity for use
 *	@return NULL on no more room or error, a blank entity otherwise
 */
-*Entity entity_new();
+Entity* entity_new();
 
 
 /**
