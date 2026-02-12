@@ -3,6 +3,15 @@
   "WorkspaceRootPath": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\2DGameProj\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\entity.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9125EF0-5B36-4CF1-8712-17C068B5EF43}|2DGame\\2DGame.vcxproj|C:\\LAPTOP BACKUP\\DOCUMENTS\\2DGAME\\GAMEFRAMEWORK2D\\INCLUDE\\ENTITY.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9125EF0-5B36-4CF1-8712-17C068B5EF43}|2DGame\\2DGame.vcxproj|C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\gf2d_draw.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B9125EF0-5B36-4CF1-8712-17C068B5EF43}|2DGame\\2DGame.vcxproj|C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\game.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -18,12 +27,51 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "entity.c",
+              "DocumentMoniker": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\entity.c",
+              "RelativeDocumentMoniker": "..\\src\\entity.c",
+              "ToolTip": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\entity.c",
+              "RelativeToolTip": "..\\src\\entity.c",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAAAFwAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-02-10T19:39:26.368Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "gf2d_draw.c",
+              "DocumentMoniker": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\gf2d_draw.c",
+              "RelativeDocumentMoniker": "..\\src\\gf2d_draw.c",
+              "ToolTip": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\gf2d_draw.c",
+              "RelativeToolTip": "..\\src\\gf2d_draw.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-02-10T19:37:04.523Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "entity.h",
+              "DocumentMoniker": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\include\\entity.h",
+              "RelativeDocumentMoniker": "..\\include\\entity.h",
+              "ToolTip": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\include\\entity.h",
+              "RelativeToolTip": "..\\include\\entity.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-10T19:27:02.775Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "game.c",
               "DocumentMoniker": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\game.c",
               "RelativeDocumentMoniker": "..\\src\\game.c",
               "ToolTip": "C:\\laptop backup\\Documents\\2DGame\\gameframework2d\\src\\game.c",
               "RelativeToolTip": "..\\src\\game.c",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAADsAAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAADsAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2026-01-29T05:25:01.284Z",
               "EditorCaption": ""

@@ -8,7 +8,7 @@ typedef struct
 	Uint32 entityMax;
 }EntityManager;
 
-EntityManager entityManager = {0};
+static EntityManager entityManager = {0}; /**<intiialize a LOCAL global entity manager*/
 
 void entity_manager_close();
 
@@ -27,7 +27,8 @@ void entity_manager_init(Uint32 max)
 	}
 	entityManager.entityMax = max;
 	atexit(entity_manager_close);
-	slog("initialized entity system);
+	slog("initialized entity system");
+	entityMax = max;
 }
 
 void entity_manager_close()
@@ -92,4 +93,4 @@ void entity_manager_draw_all()
 	}
 }
 
-/*eof@eof*/
+/*eol@eof*/
