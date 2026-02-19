@@ -7,6 +7,7 @@
 
 #include "entity.h"
 #include "player.h"
+#include "enemy.h"
 
 int main(int argc, char * argv[])
 {
@@ -41,6 +42,7 @@ int main(int argc, char * argv[])
     sprite = gf2d_sprite_load_image("images/backgrounds/screenshot.png");
     mouse = gf2d_sprite_load_all("images/pointer2.png",32,32,16,0);
     player = player_entity_new(gfc_vector2d(100,32));
+    enemy_entity_new(gfc_vector2d(400, 100));
     slog("press [escape] to quit");
     /*main game loop*/
     while(!done)
