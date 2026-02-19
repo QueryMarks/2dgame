@@ -15,6 +15,7 @@ typedef struct Entity_S
 	Sprite		*sprite;	/**<the entity's graphic, if it has one*/
 	float		frame;		/**<the current frame of animation for the sprite*/
 	GFC_Vector2D	position;	/**<where on the screen to draw the thing*/
+	GFC_Vector2D	velocity;	/**<velocity of the entity*/
 	GFC_Vector2D	scale;
 	void (*think)(struct Entity_S *self);		/**<think function called before update function for making decisions based on world state etc*/
 	void (*update)(struct Entity_S* self);		/**<update function called after think function for acting on decisions made in think and result of interactions etc*/
@@ -54,17 +55,17 @@ void entity_free(Entity* self);
 /**
 * @brief run the think functions for all active entities
 */
-void entity_system_think();
+void entity_manager_think_all();
 
 /**
 * @brief run the update functions for all active entities
 */
-void entity_system_update();
+void entity_manager_update_all();
 
 /**
 * @brief run the draw functions for all active entities
 */
-void entity_system_draw();
+void entity_manager_draw_all();
 
 
 #endif

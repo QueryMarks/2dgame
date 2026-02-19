@@ -3,6 +3,7 @@
 
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
+#include "gfc_input.h"
 
 #include "entity.h"
 #include "player.h"
@@ -35,11 +36,11 @@ int main(int argc, char * argv[])
     gf2d_sprite_init(1024);
 	entity_manager_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
-    
+    gfc_input_init("config/input.cfg");
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/screenshot.png");
     mouse = gf2d_sprite_load_all("images/pointer2.png",32,32,16,0);
-    player = player_entity_new(gfc_vector2d(32,32));
+    player = player_entity_new(gfc_vector2d(100,32));
     slog("press [escape] to quit");
     /*main game loop*/
     while(!done)
@@ -50,14 +51,15 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
-        
+        //ETHELYN think + update all
+        gfc_input_update();
+        entity_manager_think_all();
+        entity_manager_update_all();
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,gfc_vector2d(0,0));
-            slog("got to just before entity draw all");
 			entity_manager_draw_all();
-            slog("got to just after entity draw all");
             //UI elements last
             gf2d_sprite_draw(
                 mouse,

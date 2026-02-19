@@ -55,7 +55,6 @@ Entity *entity_new()
 		slog("entity system has not been initialized!");
 		return NULL;
 	}
-	slog("i am the entity that is approaching, entityMax is %i", entityManager.entityMax);
 	for (i = 0; i < entityManager.entityMax;i++){
 		if (entityManager.entityList[i]._inuse == 1)continue;
 		entityManager.entityList[i]._inuse = 1;
@@ -63,7 +62,6 @@ Entity *entity_new()
 		entityManager.entityList[i].scale.x = 1;
 		entityManager.entityList[i].scale.y = 1;
 		return &entityManager.entityList[i];
-		slog("returning a pointer for the entitylist");
 	}
 	return NULL;
 	
@@ -72,13 +70,11 @@ Entity *entity_new()
 
 void entity_draw(Entity *self) {
 	if (!self)return;
-	slog("made it past the if not self in entity draw");
 	if (self->sprite) {
-		gf2d_sprite_render(
+		gf2d_sprite_draw(
 			self->sprite,
 			self->position,
 			&self->scale,
-			&self->position,
 			NULL,
 			NULL,
 			NULL,
@@ -101,7 +97,7 @@ void entity_manager_think_all() {
 	if (!entityManager.entityList)return;
 	for (i = 0; i < entityManager.entityMax; i++)
 	{
-		if (!entityManager.entityList[i]._inuse)return;
+		if (entityManager.entityList[i]._inuse != 1)return;
 		if (entityManager.entityList[i].think)entityManager.entityList[i].think(&entityManager.entityList[i]);
 	}
 	free(entityManager.entityList);
@@ -113,7 +109,7 @@ void entity_manager_update_all() {
 	if (!entityManager.entityList)return;
 	for (i = 0; i < entityManager.entityMax; i++)
 	{
-		if (!entityManager.entityList[i]._inuse)return;
+		if (entityManager.entityList[i]._inuse != 1)return;
 		if (entityManager.entityList[i].update)entityManager.entityList[i].update(&entityManager.entityList[i]);
 	}
 	free(entityManager.entityList);
@@ -121,12 +117,12 @@ void entity_manager_update_all() {
 }
 
 
-void entity_manager_draw_all(Entity* self) {
+void entity_manager_draw_all() {
 	int i;
 	if (!entityManager.entityList)
 	{
 		slog("entity system has not been initialized!");
-		return NULL;
+		return;
 	}
 	for (i = 0; i < entityManager.entityMax;i++)
 	{
