@@ -5,6 +5,7 @@
 #include "gf2d_sprite.h"
 
 #include "entity.h"
+#include "player.h"
 
 int main(int argc, char * argv[])
 {
@@ -16,6 +17,7 @@ int main(int argc, char * argv[])
     int mx,my;
     float mf = 0;
     Sprite *mouse;
+    Entity *player;
     GFC_Color mouseGFC_Color = gfc_color8(255,120,180,255);
     
     /*program initializtion*/
@@ -37,6 +39,7 @@ int main(int argc, char * argv[])
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/screenshot.png");
     mouse = gf2d_sprite_load_all("images/pointer2.png",32,32,16,0);
+    player = player_entity_new(gfc_vector2d(32,32));
     slog("press [escape] to quit");
     /*main game loop*/
     while(!done)
@@ -52,9 +55,9 @@ int main(int argc, char * argv[])
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
             gf2d_sprite_draw_image(sprite,gfc_vector2d(0,0));
-			
+            slog("got to just before entity draw all");
 			entity_manager_draw_all();
-            
+            slog("got to just after entity draw all");
             //UI elements last
             gf2d_sprite_draw(
                 mouse,

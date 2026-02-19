@@ -13,11 +13,13 @@ typedef struct Entity_S
 {
 	Uint8		_inuse;		/**<this is the flag for keeping track of memory usage*/
 	Sprite		*sprite;	/**<the entity's graphic, if it has one*/
+	float		frame;		/**<the current frame of animation for the sprite*/
 	GFC_Vector2D	position;	/**<where on the screen to draw the thing*/
+	GFC_Vector2D	scale;
 	void (*think)(struct Entity_S *self);		/**<think function called before update function for making decisions based on world state etc*/
 	void (*update)(struct Entity_S* self);		/**<update function called after think function for acting on decisions made in think and result of interactions etc*/
 	void (*free)(struct Entity_S* self);		/**<clean up any custom allocated data*/
-	void* data;									/**<for ad hoc addition data for the entity*/
+	void *data;									/**<for ad hoc addition data for the entity*/
 }Entity;
 
 /**
@@ -46,7 +48,7 @@ Entity* entity_new();
 * @brief clean up an entity, and free its spot for future use
 * @param self the entity to free
 */
-void entity_free(Entity self);
+void entity_free(Entity* self);
 
 
 /**
