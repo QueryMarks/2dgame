@@ -9,6 +9,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "level.h"
+#include "camera.h"
 
 int main(int argc, char * argv[])
 {
@@ -38,9 +39,11 @@ int main(int argc, char * argv[])
     gf2d_sprite_init(1024);
 	entity_manager_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
+    camera_set_size(gfc_vector2d(1200, 720));
     gfc_input_init("config/input.cfg");
     /*demo setup*/
     level = level_test_new();
+    level_setup_camera_bounds(level);
     mouse = gf2d_sprite_load_all("images/pointer2.png",32,32,16,0);
     player = player_entity_new(gfc_vector2d(100,32));
     enemy_entity_new(gfc_vector2d(400, 100));

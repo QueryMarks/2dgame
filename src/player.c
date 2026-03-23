@@ -3,6 +3,7 @@
 
 
 #include "player.h"
+#include "camera.h"
 
 
 void player_think(Entity *self);
@@ -113,6 +114,7 @@ void player_update(Entity* self) {
 	if (self->frame >= 16) {
 		self->frame = 0;
 	}
+	camera_center_on(self->position);
 }
 
 void player_free(Entity *self) {

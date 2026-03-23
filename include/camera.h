@@ -1,21 +1,32 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
+#include "gfc_shape.h"
+
 #include "entity.h"
 #include "level.h"
 
-typedef struct Camera_S
-{
-	Uint8		_inuse;		/**<this is the flag for keeping track of memory usage*/
-	Sprite* sprite;	/**<the entity's graphic, if it has one*/
-	float		frame;		/**<the current frame of animation for the sprite*/
-	GFC_Vector2D	position;	/**<where on the screen to draw the thing*/
-	GFC_Vector2D	scale;
-	void (*think)(struct Entity_S* self);		/**<think function called before update function for making decisions based on world state etc*/
-	void (*update)(struct Entity_S* self);		/**<update function called after think function for acting on decisions made in think and result of interactions etc*/
-	void (*free)(struct Entity_S* self);		/**<clean up any custom allocated data*/
-	void* data;									/**<for ad hoc addition data for the entity*/
+typedef struct Camera_S{
+	GFC_Vector2D position;
+	GFC_Vector2D size;
+	GFC_Rect bounds;
+	Bool bindCamera;
 }Camera;
+
+
+GFC_Vector2D camera_get_position();
+
+GFC_Vector2D camera_get_offset();
+
+void camera_set_position(GFC_Vector2D position);
+
+void camera_set_bounds(GFC_Rect bounds);
+
+void camera_enable_binding(Bool bindCamera);
+
+void camera_set_size(GFC_Vector2D size);
+void camera_apply_bounds();
+void camera_center_on(GFC_Vector2D target);
 
 //void level_setup_camera_bounds(Level* level);
 

@@ -4,6 +4,7 @@
 #include "gf2d_sprite.h"
 
 #include "entity.h"
+#include "camera.h"
 
 typedef struct
 {
@@ -71,9 +72,11 @@ Entity *entity_new()
 void entity_draw(Entity *self) {
 	if (!self)return;
 	if (self->sprite) {
+		GFC_Vector2D new_position;
+		gfc_vector2d_add(new_position, self->position, camera_get_offset());
 		gf2d_sprite_draw(
 			self->sprite,
-			self->position,
+			new_position,
 			&self->scale,
 			NULL,
 			NULL,

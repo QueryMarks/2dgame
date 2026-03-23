@@ -1,25 +1,73 @@
 #include "simple_logger.h"
 #include "camera.h"
 
-static Camera camera = { 0 };
 
 
 
-void camera_set_bounds(GFC_Rect_Bounds);
+
+static Camera _camera = { 0 };
 
 
 
-/*void level_setup_camera_bounds(Level* level)
+GFC_Vector2D camera_get_position() {
+	return _camera.position;
+}
+
+GFC_Vector2D camera_get_offset() {
+	return gfc_vector2d(-_camera.position.x, -_camera.position.y);
+}
+
+void camera_set_position(GFC_Vector2D position) {
+	gfc_vector2d_copy(_camera.position, position);
+	if (_camera.bindCamera) {
+		camera_apply_bounds();
+	}
+}
+
+void camera_enable_binding(Bool bindCamera) {
+	_camera.bindCamera = bindCamera;
+}
+
+void camera_set_size(GFC_Vector2D size) {
+	gfc_vector2d_copy(_camera.size, size);
+}
+
+void camera_set_bounds(GFC_Rect bounds) {
+	gfc_rect_copy(_camera.bounds, bounds);
+
+}
+
+void camera_apply_bounds()
 {
-	if (!level) return;
-	
-	camera_set_bounds(0,0,level->tileWidth* level->width,
-	level->tileHeight* level->height);
+	if ((_camera.position.x + _camera.size.x) > (_camera.bounds.x + _camera.bounds.w))
+	{
+		_camera.position.x = (_camera.bounds.x + _camera.bounds.w) - _camera.size.x;
+	}
+	if ((_camera.position.y + _camera.size.y) > (_camera.bounds.y + _camera.bounds.h))
+	{
+		_camera.position.y = (_camera.bounds.y + _camera.bounds.h) - _camera.size.y;
+	}
 
-}*/
+	if (_camera.position.x < _camera.bounds.x)_camera.position.x = _camera.bounds.x;
+	if (_camera.position.y < _camera.bounds.y)_camera.position.y = _camera.bounds.y;
+}
+
+void camera_center_on(GFC_Vector2D target) {
+	GFC_Vector2D position;
+	position.x = target.x - _camera.size.x * 0.5;
+	position.y = target.y - _camera.size.y * 0.5;
+	camera_set_position(position);
+	if (_camera.bindCamera) {
+		camera_apply_bounds();
+	}
+}
+
 
 /*void camera_snap_to_bounds()
 {
 	if (camera.view.x < camera.bounds.x)camera.view.x = camera.bounds.x;
 
 }*/
+
+/*eol@eof*/
+//hi professor
