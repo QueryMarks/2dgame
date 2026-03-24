@@ -41,14 +41,17 @@ Entity* enemy_entity_new(GFC_Vector2D position)
 }
 
 void enemy_think(Entity* self) {
-	if (!self) return;
+	if (!self) {
+		slog("enemies don't exist anymore");
+		return;
+	}
 	Entity* my_player = player_get();
 	if (!my_player) return;
 	if (my_player->position.x > self->position.x) {
-		self->velocity.x += .05;
+		self->velocity.x += .02;
 	}
 	else if (my_player->position.x < self->position.x) {
-		self->velocity.x += -.05;
+		self->velocity.x += -.02;
 	}
 /*	else {
 		self->velocity.x = 0;
@@ -58,7 +61,10 @@ void enemy_think(Entity* self) {
 }
 
 void enemy_update(Entity* self) {
-	if (!self) return;
+	if (!self) {
+		slog("enemies don't exist anymore");
+		return;
+	}
 	self->position.x += self->velocity.x;
 	if (self->collider) {
 		Collider* collider = self->collider;

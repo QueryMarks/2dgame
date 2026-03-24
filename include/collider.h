@@ -17,7 +17,7 @@ typedef struct Collider_S
 	Bool isDynamic; /**true if the collider is dynamic*/
 
 
-	void (*free)(struct Collider_S* self);
+	void (*free)(struct Collider_* self);
 
 }Collider;
 
@@ -25,8 +25,10 @@ Collider* collider_new(GFC_Rect rect, Bool isDynamic, Entity* entity);
 
 void collider_manager_init(Uint32 max, Bool isDynamic);
 void collider_manager_close();
+void collider_manager_draw_all();
+void collider_free(Collider* self);
 void collider_manager_check_collisions();
-Uint8(checkCollision)(struct Collider_S* self, struct Collider_S* other);
+Uint8 checkCollision(struct Collider_S self, struct Collider_S other);
 
 
 #endif

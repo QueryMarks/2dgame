@@ -42,8 +42,8 @@ void collider_manager_init(Uint32 max, Bool isDynamic) {
 }
 void collider_free(Collider* self) {
 	if (!self)return;
-	//if (self->collider_free)self->collider_free(self);
 	memset(self, 0, sizeof(Collider));
+	//if (self->collider_free)self->collider_free(self);
 }
 void collider_manager_close() {
 	int i;
@@ -119,10 +119,15 @@ Collider* collider_new(GFC_Rect rect, Bool isDynamic, Entity* entity) {
 	return NULL;
 }
 
-void collider_draw_all() {
+void collider_manager_draw_all() {
 	int i, j;
 	for (j = 0; j < colliderManagerDynamic.colliderMax; j++) {
-		if (colliderManagerDynamic.colliderList[j]._inuse != 1)return;
+		if (colliderManagerDynamic.colliderList[j]._inuse != 1)continue;
+		GFC_Rect camera_rect;
+		gfc_rect_copy(camera_rect, colliderManagerDynamic.colliderList[j].rect);
+		camera_rect.x = camera_rect.x + camera_get_offset().x;
+		camera_rect.y = camera_rect.y + camera_get_offset().y;
+		gf2d_draw_rect(camera_rect, gfc_color(1, 0, 0, 1));
 	}
 }
 

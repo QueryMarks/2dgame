@@ -5,6 +5,7 @@
 #include "player.h"
 #include "camera.h"
 #include "collider.h"
+#include "gf2d_draw.h"
 
 
 void player_think(Entity *self);
@@ -119,6 +120,7 @@ void player_update(Entity* self) {
 		Collider *collider = self->collider;
 		if (collider->_inuse == 1) {
 			collider->rect = gfc_rect(self->position.x, self->position.y, 128.0, 128.0);
+			gf2d_draw_rect(collider->rect, gfc_color(1, 0, 1, 1));
 		}
 	}
 	camera_center_on(self->position);

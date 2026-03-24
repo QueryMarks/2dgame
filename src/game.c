@@ -11,6 +11,7 @@
 #include "level.h"
 #include "camera.h"
 #include "collider.h"
+#include "gui.h"
 
 int main(int argc, char * argv[])
 {
@@ -21,6 +22,7 @@ int main(int argc, char * argv[])
     
     int mx,my;
     float mf = 0;
+    int time = 0;
     Sprite *mouse;
     Sprite* GUI;
     Entity *player;
@@ -50,7 +52,9 @@ int main(int argc, char * argv[])
     level_setup_camera_bounds(level);
     mouse = gf2d_sprite_load_all("images/pointer2.png",32,32,16,0);
     player = player_entity_new(gfc_vector2d(100,32));
-    enemy_entity_new(gfc_vector2d(400, 100));
+    //enemy_entity_new(gfc_vector2d(400, 100));
+    enemy_entity_new(gfc_vector2d(800, 300));
+    //enemy_entity_new(gfc_vector2d(950, 700));
     slog("press [escape] to quit");
     /*main game loop*/
     while(!done)
@@ -71,6 +75,11 @@ int main(int argc, char * argv[])
             //backgrounds drawn first
         level_draw(level);
 		entity_manager_draw_all();
+        //collider_manager_draw_all();
+        char buffer[32];
+        sprintf(buffer, "%s%i", "time: ", time);
+        write_gui(buffer);
+        draw_gui();
         //UI elements last
         gf2d_sprite_draw(
             mouse,
@@ -83,8 +92,9 @@ int main(int argc, char * argv[])
             (int)mf);
 
         gf2d_graphics_next_frame();// render current draw frame and skip to the next frame
-        
-        if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
+        time += 1;
+        if (keys[SDL_SCANCODE_ESCAPE])done = 1;
+        // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
     entity_free(player);

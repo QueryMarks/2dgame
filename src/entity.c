@@ -90,8 +90,13 @@ void entity_free(Entity *self)
 	if (!self)return;
 	if (self->sprite)gf2d_sprite_free(self->sprite);
 	if (self->free)self->free(self);
-	//MIGHT BE A MEMORY LEAK HERE make sure we can clean up the collider later
-	//if (self->collider)free(self->collider);
+	if (self->collider)
+	{
+		collider_free(self->collider);
+	}
+	//this is an issue, figure out how to clean up the collider later
+
+	
 	memset(self,0,sizeof(Entity));
 }
 
