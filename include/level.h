@@ -14,6 +14,8 @@ typedef struct {
 
 Level* level_test_new();
 
+Level* level_load(const char* filename);
+
 //Create a new level
 Level *level_new();
 

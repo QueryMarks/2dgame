@@ -42,7 +42,7 @@ int main(int argc, char * argv[])
     camera_set_size(gfc_vector2d(1200, 720));
     gfc_input_init("config/input.cfg");
     /*demo setup*/
-    level = level_test_new();
+    level = level_load("maps/testlevel.json");
     level_setup_camera_bounds(level);
     mouse = gf2d_sprite_load_all("images/pointer2.png",32,32,16,0);
     player = player_entity_new(gfc_vector2d(100,32));

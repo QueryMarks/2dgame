@@ -38,14 +38,16 @@ void level_tile_layer_build(Level* level) {
 			index = i + (j * level->tileMapWidth);
 			if (level->tileMap[index] == 0)continue;
 
-			position.x = i * level->tileSet->frame_w;
-			position.y = j * level->tileSet->frame_h;
+			position.x = i * level->tileSet->frame_w;// *4;
+			position.y = j * level->tileSet->frame_h;// *4;
 			frame = level->tileMap[index] - 1;
+			//GFC_Vector2D scalevar = gfc_vector2d(4, 4);
+			//GFC_Vector2D* scale = &scalevar;
 
 			gf2d_sprite_draw_to_surface(
 				level->tileSet,
 				position,
-				NULL,
+				NULL,//scale,
 				NULL,
 				frame,
 				level->tileLayer->surface
@@ -60,6 +62,100 @@ void level_tile_layer_build(Level* level) {
 	}
 
 
+}
+
+Level* level_load(const char* filename)
+{
+	Level* level = NULL;
+	if (!filename) {
+		slog("level filename not foundededed");
+		return NULL;
+	}
+	SJson* json = sj_load(filename);
+	SJson* ljson = sj_load(filename);
+
+	int width = 0, height = 0;
+
+	SJson* vertical, * horizontal;
+
+	int i, j;
+	SJson* item;
+	int tile;
+
+
+	const char* tileSet;
+	int frame_w, frame_h;
+	int frames_per_line;
+
+	if (!json)
+	{
+		slog("failed to load world file %s", filename);
+		return NULL;
+	}
+
+	ljson = sj_object_get_value(json, "level");
+	if (!ljson) {
+		slog("no level in json %s", filename);
+		sj_free(json);
+		return NULL;
+	}
+
+
+
+	vertical = sj_object_get_value(ljson, "tileMap");
+	if (!vertical) {
+		slog("no tilemap in json %s", filename);
+		sj_free(json);
+		return NULL;
+	}
+	height = sj_array_get_count(vertical);
+	horizontal = sj_array_get_nth(vertical, 0);
+	width = sj_array_get_count(horizontal);
+
+	level = level_new(width, height);
+
+	if (!level) {
+		slog("failed to create space for a new world for file %s", filename);
+		sj_free(json);
+		return NULL;
+	}
+
+
+	for (j = 0; j < height; j++) {
+		horizontal = sj_array_get_nth(vertical, j);
+		if (!horizontal)continue;
+		for (i = 0; i < width; i++) {
+			item = sj_array_get_nth(horizontal, i);
+			if (!item)continue;
+			tile = 0;
+			sj_get_integer_value(item, &tile);
+			level->tileMap[i + (j * width)] = tile;
+		}
+	}
+
+	tileSet = sj_object_get_value_as_string(ljson, "tileSet");
+	if (!tileSet)return NULL;
+	level->tileSet = tileSet;
+
+	sj_object_get_value_as_int(ljson, "frame_w", &frame_w);
+	sj_object_get_value_as_int(ljson, "frame_h", &frame_h);
+	sj_object_get_value_as_int(ljson, "frames_per_line", &frames_per_line);
+
+	level->tileSet = gf2d_sprite_load_all(
+		tileSet,
+		frame_w,
+		frame_h,
+		frames_per_line,
+		1
+	);
+	sj_object_get_value_as_int(ljson, "frame_w", &frame_w);
+
+	level->background = gf2d_sprite_load_image(sj_object_get_value_as_string(ljson, "background"));
+
+	level_tile_layer_build(level);
+	return level;
+	sj_free(json);
+	return level;
 }
 
 Level* level_test_new() {
