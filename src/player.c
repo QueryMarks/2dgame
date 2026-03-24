@@ -4,6 +4,7 @@
 
 #include "player.h"
 #include "camera.h"
+#include "collider.h"
 
 
 void player_think(Entity *self);
@@ -41,21 +42,22 @@ Entity *player_entity_new(GFC_Vector2D position)
 	self->think = player_think;
 	self->update = player_update;
 	self->velocity = gfc_vector2d(0, 0);
+	self->collider = collider_new(gfc_rect(position.x, position.y, 128.0, 128.0), true, self);
+	self->free = player_free;
 	player = self;
+	//self->collider = collider_new(128, 128, true);
 	return self;
 }
 
 void player_think(Entity *self) {
 	if (!self) return;
 	if (gfc_input_key_down("d")) {
-		slog("PRESSING RIGHT");
 		if (self->velocity.x + move_accel < move_max)
 			self->velocity.x += move_accel;
 		else if (self->velocity.x < move_max)
 			self->velocity.x = move_max;
 	}
 	else if (gfc_input_key_down("a")) {
-		slog("PRESSING LEFT");
 		if (self->velocity.x - move_accel > -move_max)
 			self->velocity.x -= move_accel;
 		else if (self->velocity.x > -move_max)
@@ -86,7 +88,6 @@ void player_think(Entity *self) {
 		
 	}
 	if (gfc_input_key_down("l")) {
-		slog("jump it up");
 		self->velocity.y = -4;
 	}
 	else
@@ -113,6 +114,12 @@ void player_update(Entity* self) {
 	self->frame += 0.1;
 	if (self->frame >= 16) {
 		self->frame = 0;
+	}
+	if (self->collider) {
+		Collider *collider = self->collider;
+		if (collider->_inuse == 1) {
+			collider->rect = gfc_rect(self->position.x, self->position.y, 128.0, 128.0);
+		}
 	}
 	camera_center_on(self->position);
 }

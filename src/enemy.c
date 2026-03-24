@@ -4,6 +4,7 @@
 
 #include "enemy.h"
 #include "player.h"
+#include "collider.h"
 
 
 void enemy_think(Entity* self);
@@ -34,6 +35,8 @@ Entity* enemy_entity_new(GFC_Vector2D position)
 	self->think = enemy_think;
 	self->update = enemy_update;
 	self->velocity = gfc_vector2d(0, 0);
+	self->collider = collider_new(gfc_rect(position.x, position.y, 128.0, 128.0), true, self);
+	self->free = enemy_free;
 	return self;
 }
 
@@ -57,6 +60,12 @@ void enemy_think(Entity* self) {
 void enemy_update(Entity* self) {
 	if (!self) return;
 	self->position.x += self->velocity.x;
+	if (self->collider) {
+		Collider* collider = self->collider;
+		if (collider->_inuse == 1) {
+			collider->rect = gfc_rect(self->position.x, self->position.y, 128.0, 128.0);
+		}
+	}
 }
 
 void enemy_free(Entity* self) {

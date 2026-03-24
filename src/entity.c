@@ -14,8 +14,6 @@ typedef struct
 
 static EntityManager entityManager = {0}; /**<intiialize a LOCAL global entity manager*/
 
-void entity_manager_close();
-
 void entity_manager_init(Uint32 max)
 {
 	if (!max)
@@ -92,6 +90,8 @@ void entity_free(Entity *self)
 	if (!self)return;
 	if (self->sprite)gf2d_sprite_free(self->sprite);
 	if (self->free)self->free(self);
+	//MIGHT BE A MEMORY LEAK HERE make sure we can clean up the collider later
+	//if (self->collider)free(self->collider);
 	memset(self,0,sizeof(Entity));
 }
 
@@ -135,4 +135,5 @@ void entity_manager_draw_all() {
 		
 	}
 }
+
 /*eol@eof*/

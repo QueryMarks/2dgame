@@ -10,6 +10,7 @@
 #include "enemy.h"
 #include "level.h"
 #include "camera.h"
+#include "collider.h"
 
 int main(int argc, char * argv[])
 {
@@ -21,6 +22,7 @@ int main(int argc, char * argv[])
     int mx,my;
     float mf = 0;
     Sprite *mouse;
+    Sprite* GUI;
     Entity *player;
     GFC_Color mouseGFC_Color = gfc_color8(255,120,180,255);
     
@@ -37,6 +39,8 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
+    collider_manager_init(1024, false);
+    //collider_manager_init(1024, true);
 	entity_manager_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
     camera_set_size(gfc_vector2d(1200, 720));
@@ -59,6 +63,7 @@ int main(int argc, char * argv[])
         if (mf >= 16.0)mf = 0;
         //ETHELYN think + update all
         gfc_input_update();
+        collider_manager_check_collisions();
         entity_manager_think_all();
         entity_manager_update_all();
         gf2d_graphics_clear_screen();// clears drawing buffers
