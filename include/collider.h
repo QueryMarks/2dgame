@@ -30,5 +30,5 @@ void collider_free(Collider* self);
 void collider_manager_check_collisions();
 Uint8 checkCollision(struct Collider_S self, struct Collider_S other);
 
-
+GFC_Rect collider_manager_check_static_collisions(GFC_Rect rect);
 #endif

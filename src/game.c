@@ -51,7 +51,7 @@ int main(int argc, char * argv[])
     level = level_load("maps/testlevel.json");
     level_setup_camera_bounds(level);
     mouse = gf2d_sprite_load_all("images/pointer2.png",32,32,16,0);
-    player = player_entity_new(gfc_vector2d(100,32));
+    player = player_entity_new(gfc_vector2d(100,100));
     //enemy_entity_new(gfc_vector2d(400, 100));
     enemy_entity_new(gfc_vector2d(800, 300));
     //enemy_entity_new(gfc_vector2d(950, 700));
@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
             //backgrounds drawn first
         level_draw(level);
 		entity_manager_draw_all();
-        //collider_manager_draw_all();
+        collider_manager_draw_all();
         char buffer[32];
         sprintf(buffer, "%s%i", "time: ", time);
         write_gui(buffer);

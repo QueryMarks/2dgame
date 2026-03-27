@@ -71,9 +71,9 @@ Uint8 checkCollision(struct Collider_S self, struct Collider_S other) {
 void collider_manager_check_collisions() {
 	int i, j;
 	for (j = 0; j < colliderManagerDynamic.colliderMax; j++) {
-		if (colliderManagerDynamic.colliderList[j]._inuse != 1)return;
+		if (colliderManagerDynamic.colliderList[j]._inuse != 1)continue;
 		for (i = j + 1; i < colliderManagerDynamic.colliderMax; i++) {
-			if (colliderManagerDynamic.colliderList[i]._inuse != 1)return;
+			if (colliderManagerDynamic.colliderList[i]._inuse != 1)continue;
 			//slog("one collider's position is %f, %f", colliderManagerDynamic.colliderList[i].rect.x, colliderManagerDynamic.colliderList[i].rect.y);
 			//slog("one collider's position is %f, %f", colliderManagerDynamic.colliderList[j].rect.x, colliderManagerDynamic.colliderList[j].rect.y);
 
@@ -87,7 +87,44 @@ void collider_manager_check_collisions() {
 			}
 			
 		}
+		//dynamic collisions with static colliders
+		for (i = 0; i < colliderManagerStatic.colliderMax; i++) {
+			if (colliderManagerStatic.colliderList[i]._inuse != 1)continue;
+			if (checkCollision(colliderManagerDynamic.colliderList[j], colliderManagerStatic.colliderList[i])) {
+				if (!colliderManagerDynamic.colliderList[j].entity->collide) {
+					colliderManagerDynamic.colliderList[j].entity->collide(&colliderManagerStatic.colliderList[i]);
+				}
+			}
+		}
 	}
+}
+
+//commandeered rect overlap exclusive
+Uint8 gfc_rect_overlap_excl(GFC_Rect a, GFC_Rect b)
+{
+	if ((a.x > b.x + b.w) ||
+		(b.x > a.x + a.w) ||
+		(a.y > b.y + b.h) ||
+		(b.y > a.y + a.h))
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+//Returns a pointer to the first overlapping collider in the list if the given rect would intersect with a static collider. Returns NULL if no collider would 
+GFC_Rect collider_manager_check_static_collisions(GFC_Rect rect) {
+	//Collider *collider = collider_new(rect, true, NULL);
+	for (int i = 0; i < colliderManagerStatic.colliderMax; i++) {
+		if (colliderManagerStatic.colliderList[i]._inuse != 1)continue;
+		if (gfc_rect_overlap(rect, colliderManagerStatic.colliderList[i].rect)) {
+			return colliderManagerStatic.colliderList[i].rect;
+		}
+	}
+	return (gfc_rect(0,0,0,0));
+
 }
 
 //returns a new collider
@@ -125,6 +162,14 @@ void collider_manager_draw_all() {
 		if (colliderManagerDynamic.colliderList[j]._inuse != 1)continue;
 		GFC_Rect camera_rect;
 		gfc_rect_copy(camera_rect, colliderManagerDynamic.colliderList[j].rect);
+		camera_rect.x = camera_rect.x + camera_get_offset().x;
+		camera_rect.y = camera_rect.y + camera_get_offset().y;
+		gf2d_draw_rect(camera_rect, gfc_color(1, 0, 0, 1));
+	}
+	for (j = 0; j < colliderManagerStatic.colliderMax; j++) {
+		if (colliderManagerStatic.colliderList[j]._inuse != 1)continue;
+		GFC_Rect camera_rect;
+		gfc_rect_copy(camera_rect, colliderManagerStatic.colliderList[j].rect);
 		camera_rect.x = camera_rect.x + camera_get_offset().x;
 		camera_rect.y = camera_rect.y + camera_get_offset().y;
 		gf2d_draw_rect(camera_rect, gfc_color(1, 0, 0, 1));

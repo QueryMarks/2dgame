@@ -20,6 +20,7 @@ typedef struct Entity_S
 	void (*think)(struct Entity_S *self);		/**<think function called before update function for making decisions based on world state etc*/
 	void (*update)(struct Entity_S* self);		/**<update function called after think function for acting on decisions made in think and result of interactions etc*/
 	void (*free)(struct Entity_S* self);		/**<clean up any custom allocated data*/
+	void (*collide)(void* collider);			/**<collide with another collider. because i am so poor at this we gotta cast the void pointer as a collider to avoid circular references in these header files/
 	void *data;									/**<for ad hoc addition data for the entity*/
 	void* collider;
 }Entity;

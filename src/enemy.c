@@ -13,6 +13,10 @@ void enemy_update(Entity* self);
 
 void enemy_free(Entity* self);
 
+void enemy_collide(void* collider) {
+	return;
+}
+
 
 Entity* enemy_entity_new(GFC_Vector2D position)
 {
@@ -37,6 +41,7 @@ Entity* enemy_entity_new(GFC_Vector2D position)
 	self->velocity = gfc_vector2d(0, 0);
 	self->collider = collider_new(gfc_rect(position.x, position.y, 128.0, 128.0), true, self);
 	self->free = enemy_free;
+	//self->collide = enemy_collide;
 	return self;
 }
 

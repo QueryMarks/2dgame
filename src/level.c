@@ -3,7 +3,7 @@
 #include "gf2d_graphics.h"
 #include "gfc_shape.h"
 #include "camera.h"
-
+#include "collider.h"
 
 void level_tile_layer_build(Level* level) {
 	if (!level) return;
@@ -62,6 +62,31 @@ void level_tile_layer_build(Level* level) {
 	}
 
 
+}
+
+
+void level_collision_layer_build(Level* level) {
+	if (!level) return;
+	if (!level->tileSet)return;
+	int i, j, index;
+	GFC_Vector2D position;
+
+	slog("level is real");
+
+	for (j = 0; j < level->tileMapHeight; j++) {
+		for (i = 0; i < level->tileMapWidth; i++) {
+			index = i + (j * level->tileMapWidth);
+			if (level->tileMap[index] == 0)continue;
+			position.x = i * level->tileSet->frame_w;// *4;
+			position.y = j * level->tileSet->frame_h;
+			GFC_Rect newRect = gfc_rect(position.x, position.y, level->tileSet->frame_w, level->tileSet->frame_h);
+			Collider* newCollider = collider_new(newRect, false, NULL);
+			//GFC_Vector2D scalevar = gfc_vector2d(4, 4);
+			//GFC_Vector2D* scale = &scalevar;
+		}
+	}
+	level->tileLayer->texture = SDL_CreateTextureFromSurface(gf2d_graphics_get_renderer(), level->tileLayer->surface);
+	slog("finished making level collisions");
 }
 
 Level* level_load(const char* filename)
@@ -153,6 +178,7 @@ Level* level_load(const char* filename)
 	level->background = gf2d_sprite_load_image(sj_object_get_value_as_string(ljson, "background"));
 
 	level_tile_layer_build(level);
+	level_collision_layer_build(level);
 	return level;
 	sj_free(json);
 	return level;
