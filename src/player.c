@@ -63,7 +63,7 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 			GFC_Rect found_collider = collider_manager_check_static_collisions(newRect);
 			int adjusted = 0;
 			//if (!(found_collider.h == 0 && found_collider.w == 0))
-			while (!(found_collider.h == 0 && found_collider.w == 0) && adjusted <= 10000)
+			while (!(found_collider.h == 0 && found_collider.w == 0) && adjusted <= 10)
 			{
 
 				//add the code to move the character to the edge of the collider here
@@ -93,7 +93,7 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 					//somehow we would become exactly aligned with a tile. just don't move
 					return player->position;
 				}*/
-				if (abs(abs(center_subtract.x) - abs(center_subtract.y)) <= 1) {
+				/*if (abs(abs(center_subtract.x) - abs(center_subtract.y)) <= 1) {
 					if (abs(vectorRight) < abs(vectorLeft)) {
 						move_position.x += vectorRight;
 					}
@@ -108,31 +108,34 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 					}
 				}
 				else
+				{*/
+					//if (abs(center_subtract.x) == 0)center_subtract.x = 1000;
+					//if (abs(center_subtract.y) == 0)center_subtract.y = 1000;
+				if ((abs(center_subtract.x) > abs(center_subtract.y)))//(min(abs(vectorRight), abs(vectorLeft)) < min(abs(vectorUp), abs(vectorDown))) 
 				{
-					if (abs(center_subtract.x) > abs(center_subtract.y))//(min(abs(vectorRight), abs(vectorLeft)) < min(abs(vectorUp), abs(vectorDown))) 
-					{
-						if (abs(vectorRight) < abs(vectorLeft)) {
-							move_position.x += vectorRight;
-						}
-						else {
-							move_position.x += vectorLeft;
-						}
-						self->velocity.x = 0;
+					if (abs(vectorRight) < abs(vectorLeft)) {
+						move_position.x += vectorRight;
 					}
-					else
-					{
-						if (abs(vectorUp) < abs(vectorDown)) {
-							move_position.y += vectorUp;
-						}
-						else {
-							move_position.y += vectorDown;
-						}
-						self->velocity.y = 0;
+					else {
+						move_position.x += vectorLeft;
 					}
+					//self->velocity.x = 0;
+				}
+				else
+				{
+					if (abs(vectorUp) < abs(vectorDown)) {
+						move_position.y += vectorUp;
+					}
+					else {
+						move_position.y += vectorDown;
+					}
+					//self->velocity.y = 0;
+				}
 					//player_check_move(self, move_position);
 					//move_position = self->position;//player_check_move(self, move_position);
 					
-				}
+				//}
+				slog("the vectors are AS FOLLOWS: Left Right Up Down: %f, %f, %f, %f", vectorLeft, vectorRight, vectorUp, vectorDown);
 				newRect.y = move_position.y;
 				newRect.x = move_position.x;
 				found_collider = collider_manager_check_static_collisions(newRect);

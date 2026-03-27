@@ -102,15 +102,26 @@ void collider_manager_check_collisions() {
 //commandeered rect overlap exclusive
 Uint8 gfc_rect_overlap_excl(GFC_Rect a, GFC_Rect b)
 {
-	if ((a.x > b.x + b.w) ||
-		(b.x > a.x + a.w) ||
-		(a.y > b.y + b.h) ||
-		(b.y > a.y + a.h))
+	int ax = round(a.x);
+	int aw = round(a.w);
+	int ay = round(a.y);
+	int ah = round(a.h);
+	int bx = round(b.x);
+	int bw = round(b.w);
+	int by = round(b.y);
+	int bh = round(b.h);
+	if (((a.x >= b.x + b.w)) || //(ax = bx+bw)) ||
+		((b.x >= a.x + a.w)) || //(bx = round(ax+aw))) ||
+		((a.y >= b.y + b.h)) || //(ay = round(by+bh))) ||
+		((b.y >= a.y + a.h))) //|| (by = round(ay+ah))))
 	{
+		
 		return 0;
 	}
 	else
 	{
+		slog("rect a is %d %d %d %d", ax, aw, ay, ah);
+		slog("rect b is %d %d %d %d", bx, bw, by, bh);
 		return 1;
 	}
 }
@@ -119,7 +130,7 @@ GFC_Rect collider_manager_check_static_collisions(GFC_Rect rect) {
 	//Collider *collider = collider_new(rect, true, NULL);
 	for (int i = 0; i < colliderManagerStatic.colliderMax; i++) {
 		if (colliderManagerStatic.colliderList[i]._inuse != 1)continue;
-		if (gfc_rect_overlap(rect, colliderManagerStatic.colliderList[i].rect)) {
+		if (gfc_rect_overlap_excl(rect, colliderManagerStatic.colliderList[i].rect)) {
 			return colliderManagerStatic.colliderList[i].rect;
 		}
 	}
