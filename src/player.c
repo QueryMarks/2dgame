@@ -216,8 +216,9 @@ void player_think(Entity *self) {
 	}
 
 	if (gfc_input_key_pressed("'")) {
-		if (weapon < 3) {
+		if (weapon < 6) {
 			weapon += 1;
+			slog("weapon is %d", weapon);
 		}
 		else {
 			weapon = 0;
@@ -231,7 +232,7 @@ void player_think(Entity *self) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing, 0));
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing, 0),5.0f,0,3000000);
 		}
 		//TRIPLET
 		else if (weapon == 1)
@@ -239,29 +240,62 @@ void player_think(Entity *self) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0));
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0.3));
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, -0.3));
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0), 5, 0, 20);
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0.3),5, 0, 20);
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, -0.3),5, 0, 20);
 		}
 		//TWOSIDE
 		else if (weapon == 2) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.5, 0));
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing * -0.5, 0));
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.5, 0), 5, 0, 300);
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing * -0.5, 0), 5, 0, 300);
 		}
 		//BIGSHOT
 		else if (weapon == 3) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(0, 0));
-			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.25, 0));
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.25, 0), 8, 0, 120);
 			shot->scale = gfc_vector2d(2, 2);
 			Collider* shotcollider = shot->collider;
 			shotcollider->rect.w *= 2;
 			shotcollider->rect.h *= 2;
 		}
+		//SWORDITUDE
+		else if (weapon == 4) {
+			Collider* collider = self->collider;
+			GFC_Vector2D shotpoint;
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32+(self->facing*48), -65));
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(0, 0),10,2,3);
+			shot->scale = gfc_vector2d(2, 3);
+			Collider* shotcollider = shot->collider;
+			shotcollider->rect.w *= 2;
+			shotcollider->rect.h *= 3;
+
+		}
+		//SEALASER
+		else if (weapon == 5) {
+			Collider* collider = self->collider;
+			GFC_Vector2D shotpoint;
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32 *250 + (self->facing * 32 * 250), 0));
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(0, 0), 4, 2, 3);
+			shot->scale = gfc_vector2d(500, 0.1);
+			Collider* shotcollider = shot->collider;
+			shotcollider->rect.w *= 500;
+			shotcollider->rect.h *= 0.1;
+
+		}
+		//BUBBLE BOMB
+		else if (weapon == 6) {
+			Collider* collider = self->collider;
+			GFC_Vector2D shotpoint;
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32 + (self->facing * 32), 0));
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing, -0.25), 1, EXPLOSIVE, 600);
+			
+		}
+
 	}
 
 	if (gfc_input_key_pressed("p") && candash == 1) {
