@@ -17,10 +17,13 @@ typedef struct Entity_S
 	GFC_Vector2D	position;	/**<where on the screen to draw the thing*/
 	GFC_Vector2D	velocity;	/**<velocity of the entity*/
 	GFC_Vector2D	scale;
+	Uint8		removeme;
+	int facing; //-1 is left, 1 is right
 	void (*think)(struct Entity_S *self);		/**<think function called before update function for making decisions based on world state etc*/
 	void (*update)(struct Entity_S* self);		/**<update function called after think function for acting on decisions made in think and result of interactions etc*/
 	void (*free)(struct Entity_S* self);		/**<clean up any custom allocated data*/
-	void (*collide)(void* collider);			/**<collide with another collider. because i am so poor at this we gotta cast the void pointer as a collider to avoid circular references in these header files/
+	void (*collide)(struct Entity_S* self, void* collider);			/**<collide with another collider. because i am so poor at this we gotta cast the void pointer as a collider to avoid circular references in these header files*/
+	void (*postupdate)(struct Entity_S* self);
 	void *data;									/**<for ad hoc addition data for the entity*/
 	void* collider;
 }Entity;

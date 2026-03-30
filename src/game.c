@@ -59,14 +59,15 @@ int main(int argc, char * argv[])
     /*main game loop*/
     while(!done)
     {
-        SDL_PumpEvents();   // update SDL's internal event structures
-        keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
+        //SDL_PumpEvents();   // update SDL's internal event structures
+         // get the keyboard state for this frame
         /*update things here*/
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
         //ETHELYN think + update all
         gfc_input_update();
+        keys = SDL_GetKeyboardState(NULL);
         collider_manager_check_collisions();
         entity_manager_think_all();
         entity_manager_update_all();

@@ -78,9 +78,14 @@ void collider_manager_check_collisions() {
 			//slog("one collider's position is %f, %f", colliderManagerDynamic.colliderList[j].rect.x, colliderManagerDynamic.colliderList[j].rect.y);
 
 			if (checkCollision(colliderManagerDynamic.colliderList[j], colliderManagerDynamic.colliderList[i])) {
-				slog("have the objects touched? YES!!!");
 				if ((colliderManagerDynamic.colliderList[j].entity != NULL) && (colliderManagerDynamic.colliderList[i].entity != NULL))
-					entity_free(colliderManagerDynamic.colliderList[i].entity);
+				{
+					colliderManagerDynamic.colliderList[j].entity->collide(colliderManagerDynamic.colliderList[j].entity, &colliderManagerDynamic.colliderList[i]);
+				}
+				if ((colliderManagerDynamic.colliderList[j].entity != NULL) && (colliderManagerDynamic.colliderList[i].entity != NULL))
+				{
+					colliderManagerDynamic.colliderList[i].entity->collide(colliderManagerDynamic.colliderList[i].entity, &colliderManagerDynamic.colliderList[j]);
+				}
 			}
 			else {
 				
@@ -91,8 +96,9 @@ void collider_manager_check_collisions() {
 		for (i = 0; i < colliderManagerStatic.colliderMax; i++) {
 			if (colliderManagerStatic.colliderList[i]._inuse != 1)continue;
 			if (checkCollision(colliderManagerDynamic.colliderList[j], colliderManagerStatic.colliderList[i])) {
-				if (!colliderManagerDynamic.colliderList[j].entity->collide) {
-					colliderManagerDynamic.colliderList[j].entity->collide(&colliderManagerStatic.colliderList[i]);
+				if (!colliderManagerDynamic.colliderList[j].entity)continue;
+				if (colliderManagerDynamic.colliderList[j].entity->collide) {
+					colliderManagerDynamic.colliderList[j].entity->collide(colliderManagerDynamic.colliderList[j].entity, &colliderManagerStatic.colliderList[i]);
 				}
 			}
 		}
@@ -120,8 +126,8 @@ Uint8 gfc_rect_overlap_excl(GFC_Rect a, GFC_Rect b)
 	}
 	else
 	{
-		slog("rect a is %d %d %d %d", ax, aw, ay, ah);
-		slog("rect b is %d %d %d %d", bx, bw, by, bh);
+		//slog("rect a is %d %d %d %d", ax, aw, ay, ah);
+		//slog("rect b is %d %d %d %d", bx, bw, by, bh);
 		return 1;
 	}
 }
@@ -162,6 +168,7 @@ Collider* collider_new(GFC_Rect rect, Bool isDynamic, Entity* entity) {
 		colliderManager->colliderList[i].rect = rect;
 		colliderManager->colliderList[i].entity = entity;
 		colliderManager->colliderList[i].free = collider_free;
+		colliderManager->colliderList[i].team = 0;
 		return &colliderManager->colliderList[i];
 	}
 	return NULL;

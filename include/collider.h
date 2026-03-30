@@ -15,7 +15,7 @@ typedef struct Collider_S
 	//GFC_Vector2D position; /**<the position of the collider, should be synced with the entity/tile*/
 	GFC_Rect rect; /**the rectangle of the collider*/
 	Bool isDynamic; /**true if the collider is dynamic*/
-
+	Uint8 team; /**<0 for solid, 1 for player-aligned, 2 for enemy- or otherwise damageable-aligned**/
 
 	void (*free)(struct Collider_* self);
 

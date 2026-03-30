@@ -6,6 +6,7 @@
 #include "camera.h"
 #include "collider.h"
 #include "gf2d_draw.h"
+#include "shot.h"
 
 
 void player_think(Entity *self);
@@ -14,15 +15,28 @@ void player_update(Entity *self);
 
 void player_free(Entity *self);
 
-void player_collide(void* collider);
+void player_collide(Entity *self, void* collider);
 
-float gravity = 0.05;
+float gravity = 0.1;
 float gravity_max = 4;
 
-float move_accel = 0.3;
+GFC_Rect ground_check_rect;
+
+float move_accel = 0.1;
 float move_friction = 0.1;
 float move_water_friction = 0.01;
-float move_max = 4;
+float move_max = 3;
+
+//bools for dashes etc
+int candash = 1;
+int float_timer = 60;
+
+float buoy_accel = 0.1;
+int buoy_timer = 0;
+int can_buoying = 0;
+
+int weapon = 0;
+int weaponmax = 9;
 
 Entity *player_entity_new(GFC_Vector2D position)
 {
@@ -46,6 +60,9 @@ Entity *player_entity_new(GFC_Vector2D position)
 	self->update = player_update;
 	self->velocity = gfc_vector2d(0, 0);
 	self->collider = collider_new(gfc_rect(position.x, position.y, 64, 64), true, self);
+	self->facing = 1;
+	Collider* collider = self->collider;
+	collider->team = 1;
 	self->free = player_free;
 	self->collide = player_collide;
 	player = self;
@@ -75,43 +92,7 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 				double vectorLeft = -((newRect.w + newRect.x) - found_collider.x);
 				double vectorUp = -((newRect.h + newRect.y)- found_collider.y);
 				double vectorDown = -(newRect.y - (found_collider.y + found_collider.h));
-				/*
-				if (vectorRight == 0) {
-					vectorRight = 1000;
-				}
-				if (vectorLeft == 0) {
-					vectorLeft = 1000;
-				}
-				if (vectorUp == 0) {
-					vectorUp = 1000;
-				}
-				if (vectorDown == 0) {
-					vectorDown = 1000;
-				}
-
-				if ((vectorLeft == 1000) && (vectorRight == 1000) && (vectorUp == 1000) && (vectorDown == 1000)) {
-					//somehow we would become exactly aligned with a tile. just don't move
-					return player->position;
-				}*/
-				/*if (abs(abs(center_subtract.x) - abs(center_subtract.y)) <= 1) {
-					if (abs(vectorRight) < abs(vectorLeft)) {
-						move_position.x += vectorRight;
-					}
-					else {
-						move_position.x += vectorLeft;
-					}
-					if (abs(vectorUp) < abs(vectorDown)) {
-						move_position.y += vectorUp;
-					}
-					else {
-						move_position.y += vectorDown;
-					}
-				}
-				else
-				{*/
-					//if (abs(center_subtract.x) == 0)center_subtract.x = 1000;
-					//if (abs(center_subtract.y) == 0)center_subtract.y = 1000;
-				if ((abs(center_subtract.x) > abs(center_subtract.y)))//(min(abs(vectorRight), abs(vectorLeft)) < min(abs(vectorUp), abs(vectorDown))) 
+				if ((abs(min(abs(vectorRight), abs(vectorLeft)))) < (abs(min(abs(vectorUp), abs(vectorDown)))))
 				{
 					if (abs(vectorRight) < abs(vectorLeft)) {
 						move_position.x += vectorRight;
@@ -119,7 +100,7 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 					else {
 						move_position.x += vectorLeft;
 					}
-					//self->velocity.x = 0;
+					self->velocity.x = 0;
 				}
 				else
 				{
@@ -129,13 +110,9 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 					else {
 						move_position.y += vectorDown;
 					}
-					//self->velocity.y = 0;
+					self->velocity.y = 0;
 				}
-					//player_check_move(self, move_position);
-					//move_position = self->position;//player_check_move(self, move_position);
-					
-				//}
-				slog("the vectors are AS FOLLOWS: Left Right Up Down: %f, %f, %f, %f", vectorLeft, vectorRight, vectorUp, vectorDown);
+				//slog("the vectors are AS FOLLOWS: Left Right Up Down: %f, %f, %f, %f", vectorLeft, vectorRight, vectorUp, vectorDown);
 				newRect.y = move_position.y;
 				newRect.x = move_position.x;
 				found_collider = collider_manager_check_static_collisions(newRect);
@@ -147,15 +124,26 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 	return move_position;
 }
 
+
 void player_think(Entity *self) {
 	if (!self) return;
+
+	if (collider_manager_check_static_collisions(ground_check_rect).h != 0)
+	{
+		candash = 1;
+		can_buoying = 1;
+		buoy_timer = 0;
+		float_timer = 60;
+	}
 	if (gfc_input_key_down("d")) {
+		self->facing = 1;
 		if (self->velocity.x + move_accel < move_max)
 			self->velocity.x += move_accel;
 		else if (self->velocity.x < move_max)
 			self->velocity.x = move_max;
 	}
 	else if (gfc_input_key_down("a")) {
+		self->facing = -1;
 		if (self->velocity.x - move_accel > -move_max)
 			self->velocity.x -= move_accel;
 		else if (self->velocity.x > -move_max)
@@ -185,16 +173,100 @@ void player_think(Entity *self) {
 		}
 		
 	}
-	if (gfc_input_key_down("l")) {
-		self->velocity.y = -4;
+	if (gfc_input_key_pressed("l")) {
+		if (collider_manager_check_static_collisions(ground_check_rect).h != 0) {
+			self->velocity.y = -4;
+		}
+		else if (can_buoying == 1) {
+			self->velocity.y = 0;
+			slog("initiate buoy");
+			buoy_timer = 60;
+			can_buoying = 0;
+		}
+		
 	}
 	else
 	{
-		if (self->velocity.y + gravity < gravity_max)
-			self->velocity.y += gravity;
-		else if (self->velocity.y < gravity_max)
-			self->velocity.y = gravity_max;
+		//float/gravity checking
+		if (gfc_input_key_down("w") && float_timer > 0) {
+			float_timer -= 1;
+			self->velocity.y = 0.1;
+		}
+		else if (buoy_timer > 0) {
+			buoy_timer -= 1;
+			if (!(gfc_input_key_down("l")))
+			{
+				buoy_timer -= 1;
+			}
+			self->velocity.y -= buoy_accel;
+			
+			slog("buoying");
+		}
+		else {
+			float temp_gravity = gravity;
+				if (gfc_input_key_down("l")) {
+					temp_gravity *= 0.5;
+				}
+				if (self->velocity.y + temp_gravity < gravity_max)
+					self->velocity.y += temp_gravity;
+				else if (self->velocity.y < gravity_max)
+					self->velocity.y = gravity_max;
+		}
 
+	}
+
+	if (gfc_input_key_pressed("'")) {
+		if (weapon < 3) {
+			weapon += 1;
+		}
+		else {
+			weapon = 0;
+		}
+	}
+	//fire weapons here
+	if (gfc_input_key_pressed(";")) {
+		//move the weapon logic to different weapon files in the future.
+		//BUSTER
+		if (weapon == 0) {
+			Collider* collider = self->collider;
+			GFC_Vector2D shotpoint;
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing, 0));
+		}
+		//TRIPLET
+		else if (weapon == 1)
+		{
+			Collider* collider = self->collider;
+			GFC_Vector2D shotpoint;
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0));
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0.3));
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, -0.3));
+		}
+		//TWOSIDE
+		else if (weapon == 2) {
+			Collider* collider = self->collider;
+			GFC_Vector2D shotpoint;
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.5, 0));
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing * -0.5, 0));
+		}
+		//BIGSHOT
+		else if (weapon == 3) {
+			Collider* collider = self->collider;
+			GFC_Vector2D shotpoint;
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(0, 0));
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.25, 0));
+			shot->scale = gfc_vector2d(2, 2);
+			Collider* shotcollider = shot->collider;
+			shotcollider->rect.w *= 2;
+			shotcollider->rect.h *= 2;
+		}
+	}
+
+	if (gfc_input_key_pressed("p") && candash == 1) {
+		self->velocity.x = 8 * self->facing;
+		candash = false;
 	}
 }
 
@@ -208,7 +280,6 @@ void player_update(Entity* self) {
 	if (!self) return;
 	GFC_Vector2D new_position = gfc_vector2d(self->position.x + self->velocity.x, self->position.y + self->velocity.y);
 	if (self->collider) {
-		Collider* collider = self->collider;
 		
 		new_position = player_check_move(self, new_position);
 	}
@@ -223,7 +294,9 @@ void player_update(Entity* self) {
 		Collider *collider = self->collider;
 		if (collider->_inuse == 1) {
 			collider->rect = gfc_rect(self->position.x, self->position.y, 64, 64);
-			gf2d_draw_rect(collider->rect, gfc_color(1, 0, 1, 1));
+			//gf2d_draw_rect(collider->rect, gfc_color(1, 0, 1, 1));
+			ground_check_rect = gfc_rect(collider->rect.x, collider->rect.y + collider->rect.h, collider->rect.w, 2);
+			//gf2d_draw_rect(ground_check_rect, gfc_color(0, 0, 1, 1));
 		}
 	}
 	camera_center_on(self->position);
@@ -233,10 +306,11 @@ void player_free(Entity *self) {
 	if (!self) return;
 }
 
-void player_collide(void* collider) {
+void player_collide(Entity* self, void* collider) {
+	if (!collider) return;
 	Collider *other = collider;
-	if (!other->isDynamic) {
-		slog("touching static collider in player");
+	if (other->isDynamic) {
+		slog("collidedwith a dynamic thing");
 	}
 }
 

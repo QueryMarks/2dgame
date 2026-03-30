@@ -14,6 +14,8 @@ typedef struct
 
 static EntityManager entityManager = {0}; /**<intiialize a LOCAL global entity manager*/
 
+void postupdate(Entity* self);
+
 void entity_manager_init(Uint32 max)
 {
 	if (!max)
@@ -60,6 +62,7 @@ Entity *entity_new()
 		//set defaults
 		entityManager.entityList[i].scale.x = 1;
 		entityManager.entityList[i].scale.y = 1;
+		entityManager.entityList[i].postupdate = postupdate;
 		return &entityManager.entityList[i];
 	}
 	return NULL;
@@ -105,10 +108,9 @@ void entity_manager_think_all() {
 	if (!entityManager.entityList)return;
 	for (i = 0; i < entityManager.entityMax; i++)
 	{
-		if (entityManager.entityList[i]._inuse != 1)return;
+		if (entityManager.entityList[i]._inuse != 1)continue;
 		if (entityManager.entityList[i].think)entityManager.entityList[i].think(&entityManager.entityList[i]);
 	}
-	free(entityManager.entityList);
 
 }
 
@@ -117,10 +119,10 @@ void entity_manager_update_all() {
 	if (!entityManager.entityList)return;
 	for (i = 0; i < entityManager.entityMax; i++)
 	{
-		if (entityManager.entityList[i]._inuse != 1)return;
-		if (entityManager.entityList[i].update)entityManager.entityList[i].update(&entityManager.entityList[i]);
+		if (entityManager.entityList[i]._inuse != 1)continue;
+		if (entityManager.entityList[i].update != NULL)entityManager.entityList[i].update(&entityManager.entityList[i]);
+		if (entityManager.entityList[i].postupdate != NULL)entityManager.entityList[i].postupdate(&entityManager.entityList[i]);
 	}
-	free(entityManager.entityList);
 
 }
 
@@ -138,6 +140,12 @@ void entity_manager_draw_all() {
 			entity_draw(&entityManager.entityList[i]);
 		}
 		
+	}
+}
+
+void postupdate(Entity* self) {
+	if (self->removeme == 1) {
+		entity_free(self);
 	}
 }
 
