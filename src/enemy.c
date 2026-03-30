@@ -5,6 +5,7 @@
 #include "enemy.h"
 #include "player.h"
 #include "collider.h"
+#include "shot.h"
 
 
 void enemy_think(Entity* self);
@@ -42,6 +43,8 @@ Entity* enemy_entity_new(GFC_Vector2D position)
 	Collider* collider = self->collider;
 	collider->team = 2;
 	self->free = enemy_free;
+	self->data = malloc(sizeof(float)); //used for health
+	self->health = 10.0f;
 	//self->collide = enemy_collide;
 	return self;
 }
@@ -150,7 +153,19 @@ void enemy_collide(Entity* self, void* collider) {
 		if (!collider) return;
 		Collider* collided = collider;
 		if (collided->team == 1) {
-			self->removeme = 1;
+			if (collided->entity->damager == 1) {
+				if (self->data == NULL) {
+					return;
+				}
+				Shot_Data* damager = collided->entity->data;
+				self->health -= damager->damage;
+				
+				if (self->health <= 0.0f) {
+					self->removeme = 1;
+				}
+			}
+
+			
 		}
 	}
 }

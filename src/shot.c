@@ -37,6 +37,7 @@ Entity* shot_entity_new(GFC_Vector2D position, GFC_Vector2D direction, float dam
 	self->collider = collider_new(gfc_rect(position.x, position.y, 32, 32), true, self);
 	self->collide = shot_collide;
 	self->free = shot_free;
+	self->damager = 1;
 	Collider* collider = self->collider;
 	collider->team = 1;
 	//data is used for the timer
@@ -73,7 +74,7 @@ void shot_update(Entity* self) {
 	
 	Shot_Data* shot_data = self->data;
 	int timer = shot_data->timer;
-	slog("MY TIMER IS %D", timer);
+	//slog("MY TIMER IS %d", timer);
 	if (timer == 0) {
 		self->removeme = 1;
 	}

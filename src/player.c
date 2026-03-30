@@ -17,21 +17,21 @@ void player_free(Entity *self);
 
 void player_collide(Entity *self, void* collider);
 
-float gravity = 0.1;
+float gravity = 0.1f;
 float gravity_max = 4;
 
 GFC_Rect ground_check_rect;
 
-float move_accel = 0.1;
-float move_friction = 0.1;
-float move_water_friction = 0.01;
+float move_accel = 0.1f;
+float move_friction = 0.05f;
+float move_water_friction = 0.01f;
 float move_max = 3;
 
 //bools for dashes etc
 int candash = 1;
 int float_timer = 60;
 
-float buoy_accel = 0.1;
+float buoy_accel = 0.1f;
 int buoy_timer = 0;
 int can_buoying = 0;
 
@@ -151,7 +151,7 @@ void player_think(Entity *self) {
 	}
 	else {
 		//set to if false for now because we don't have the ground yet
-		if (false) {
+		if (collider_manager_check_static_collisions(ground_check_rect).h != 0) {
 			if (self->velocity.x > 0) {
 				if (self->velocity.x - move_friction < 0) {
 					self->velocity.x = 0;
@@ -240,24 +240,24 @@ void player_think(Entity *self) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0), 5, 0, 20);
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0.3),5, 0, 20);
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, -0.3),5, 0, 20);
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0), 5.0f, 0, 20);
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0.3),5.0f, 0, 20);
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, -0.3),5.0f, 0, 20);
 		}
 		//TWOSIDE
 		else if (weapon == 2) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.5, 0), 5, 0, 300);
-			shot_entity_new(shotpoint, gfc_vector2d(self->facing * -0.5, 0), 5, 0, 300);
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.5, 0), 5.0f, 0, 300);
+			shot_entity_new(shotpoint, gfc_vector2d(self->facing * -0.5, 0), 5.0f, 0, 300);
 		}
 		//BIGSHOT
 		else if (weapon == 3) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(0, 0));
-			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.25, 0), 8, 0, 120);
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.25, 0), 8.0f, 0, 120);
 			shot->scale = gfc_vector2d(2, 2);
 			Collider* shotcollider = shot->collider;
 			shotcollider->rect.w *= 2;
@@ -268,7 +268,7 @@ void player_think(Entity *self) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32+(self->facing*48), -65));
-			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(0, 0),10,2,3);
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(0, 0),10.0f,MELEE,3);
 			shot->scale = gfc_vector2d(2, 3);
 			Collider* shotcollider = shot->collider;
 			shotcollider->rect.w *= 2;
@@ -280,7 +280,7 @@ void player_think(Entity *self) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32 *250 + (self->facing * 32 * 250), 0));
-			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(0, 0), 4, 2, 3);
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(0, 0), 4.0f, HITSCAN, 3);
 			shot->scale = gfc_vector2d(500, 0.1);
 			Collider* shotcollider = shot->collider;
 			shotcollider->rect.w *= 500;
@@ -292,7 +292,7 @@ void player_think(Entity *self) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32 + (self->facing * 32), 0));
-			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing, -0.25), 1, EXPLOSIVE, 600);
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing, -0.25), 1.0f, EXPLOSIVE, 600);
 			
 		}
 
