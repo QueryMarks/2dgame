@@ -453,7 +453,6 @@ void turret_enemy_think(Entity* self) {
 	}
 	
 	Enemy_Data* enemy_data = self->data;
-	slog("my timer is %d", enemy_data->timer);
 	Entity* my_player = player_get();
 	GFC_Vector2D difference;
 	gfc_vector2d_add(difference, my_player->position, -self->position);
@@ -606,7 +605,6 @@ void walky_enemy_think(Entity* self) {
 	}
 
 	Enemy_Data* enemy_data = self->data;
-	slog("my timer is %d", enemy_data->timer);
 	Entity* my_player = player_get();
 	GFC_Vector2D difference;
 	gfc_vector2d_add(difference, my_player->position, -self->position);
@@ -754,14 +752,14 @@ Entity* bruiser_enemy_entity_new(GFC_Vector2D position)
 	self->facing = 1;
 	Collider* collider = self->collider;
 	collider->team = ENEMY;
-	self->damager = 10;
+	self->damager = 2;
 	self->free = enemy_free;
 	self->health = 100.0f;
 	Enemy_Data* enemy_data = malloc(sizeof(Enemy_Data)); //used for damage etc
 	if (enemy_data)
 	{
 		enemy_data->timer = 120;
-		enemy_data->damage = 5.0f;
+		enemy_data->damage = 10.0f;
 		self->data = enemy_data;
 	}
 	//self->collide = enemy_collide;
@@ -777,7 +775,6 @@ void bruiser_enemy_think(Entity* self) {
 	}
 
 	Enemy_Data* enemy_data = self->data;
-	slog("my timer is %d", enemy_data->timer);
 	Entity* my_player = player_get();
 	GFC_Vector2D difference;
 	gfc_vector2d_add(difference, my_player->position, -self->position);

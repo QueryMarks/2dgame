@@ -38,4 +38,5 @@ enum TEAM
 };
 
 GFC_Rect collider_manager_check_static_collisions(GFC_Rect rect);
+GFC_Rect collider_manager_check_solid_collisions(GFC_Rect rect);
 #endif

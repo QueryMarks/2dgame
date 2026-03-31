@@ -143,6 +143,18 @@ GFC_Rect collider_manager_check_static_collisions(GFC_Rect rect) {
 
 }
 
+GFC_Rect collider_manager_check_solid_collisions(GFC_Rect rect) {
+	//Collider *collider = collider_new(rect, true, NULL);
+	for (int i = 0; i < colliderManagerDynamic.colliderMax; i++) {
+		if (colliderManagerDynamic.colliderList[i]._inuse != 1)continue;
+		if (colliderManagerDynamic.colliderList[i].entity->solid != 1)continue;
+		if (gfc_rect_overlap_excl(rect, colliderManagerDynamic.colliderList[i].rect)) {
+			return colliderManagerDynamic.colliderList[i].rect;
+		}
+	}
+	return (gfc_rect(0, 0, 0, 0));
+}
+
 //returns a new collider
 Collider* collider_new(GFC_Rect rect, Bool isDynamic, Entity* entity) {
 	//if the collider is dynamic do the appropriate stuff for that

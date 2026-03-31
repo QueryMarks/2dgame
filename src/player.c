@@ -48,10 +48,10 @@ Entity *player_entity_new(GFC_Vector2D position)
 		return NULL;
 	}
 	self->sprite = gf2d_sprite_load_all(
-		"images/ed210_top.png",
-		128,
-		128,
-		16,
+		"images/player.png",
+		64,
+		64,
+		1,
 		0
 	);
 	self->position = position;
@@ -69,6 +69,8 @@ Entity *player_entity_new(GFC_Vector2D position)
 	player = self;
 	self->health = 100;
 	self->iframes = 0;
+	self->damager = 0;
+	self->data = weapon;
 	//self->collider = collider_new(128, 128, true);
 	return self;
 }
@@ -81,6 +83,9 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 			newRect.x = move_position.x;
 			newRect.y = move_position.y;
 			GFC_Rect found_collider = collider_manager_check_static_collisions(newRect);
+			if (found_collider.h == 0) {
+				found_collider = collider_manager_check_solid_collisions(newRect);
+			}
 			int adjusted = 0;
 			//if (!(found_collider.h == 0 && found_collider.w == 0))
 			while (!(found_collider.h == 0 && found_collider.w == 0) && adjusted <= 10)
@@ -119,6 +124,9 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 				newRect.y = move_position.y;
 				newRect.x = move_position.x;
 				found_collider = collider_manager_check_static_collisions(newRect);
+				if (found_collider.h == 0) {
+					found_collider = collider_manager_check_solid_collisions(newRect);
+				}
 				adjusted += 1;
 
 			}
@@ -302,6 +310,7 @@ void player_think(Entity *self) {
 		self->velocity.x = 8 * self->facing;
 		candash = false;
 	}
+	self->data = weapon;
 }
 
 Entity* player_get() {
@@ -323,8 +332,8 @@ void player_update(Entity* self) {
 	//self->position.x += self->velocity.x;
 	//self->position.y += self->velocity.y;
 	self->position = new_position;
-	self->frame += 0.1;
-	if (self->frame >= 16) {
+	self->frame += 0.05;
+	if (self->frame >= 3) {
 		self->frame = 0;
 	}
 	if (self->collider) {
@@ -350,7 +359,6 @@ void player_collide(Entity* self, void* collider) {
 	if (!collider) return;
 	Collider* other = collider;
 	if (other->isDynamic) {
-		slog("colliding with other");
 		if (other->team == ENEMY && other->entity->damager != 0 && self->iframes <= 0) {
 			float damage = 0.0f;
 			if (other->entity->damager == 2)

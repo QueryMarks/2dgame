@@ -21,6 +21,7 @@ typedef struct Entity_S
 	int facing; //-1 is left, 1 is right
 	Uint8 damager; //if 0, does not do damage. 1 = shot damage, 2 = contact damage
 	Uint8 iframes;
+	Uint8 solid; //0 if not solid, 1 if solid
 	float health;
 	void (*think)(struct Entity_S *self);		/**<think function called before update function for making decisions based on world state etc*/
 	void (*update)(struct Entity_S* self);		/**<update function called after think function for acting on decisions made in think and result of interactions etc*/

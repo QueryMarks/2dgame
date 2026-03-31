@@ -11,7 +11,16 @@
 #include "level.h"
 #include "camera.h"
 #include "collider.h"
+#include "shot.h"
+#include "wall.h"
+#include "current.h"
 #include "gui.h"
+#include "spike.h"
+#include "tnt.h"
+#include "damagezone.h"
+#include "speaker.h"
+
+
 
 int main(int argc, char * argv[])
 {
@@ -60,6 +69,23 @@ int main(int argc, char * argv[])
     turret_enemy_entity_new(gfc_vector2d(1400, 500));
     walky_enemy_entity_new(gfc_vector2d(900, 100));
     bruiser_enemy_entity_new(gfc_vector2d(1500, 100));
+    wall_entity_new(gfc_vector2d(64 * 31, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
+    wall_entity_new(gfc_vector2d(64 * 32, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
+    wall_entity_new(gfc_vector2d(64 * 31, 64 * 8), EXPLOSIVE, gfc_vector2d(64, 128));
+    wall_entity_new(gfc_vector2d(64 * 32, 64 * 8),EXPLOSIVE,gfc_vector2d(64,128));
+
+    current_entity_new(gfc_vector2d(64 * 33, 64 * 10), gfc_vector2d(0, 1), gfc_vector2d(64, 128));
+    current_entity_new(gfc_vector2d(64 * 33, 64 * 8), gfc_vector2d(0, 1), gfc_vector2d(64, 128));
+
+    spike_entity_new(gfc_vector2d(64 * 44, 64 * 12), 30.0f, gfc_vector2d(64, 64));
+    tnt_entity_new(gfc_vector2d(64 * 49, 64 * 13));
+    tnt_entity_new(gfc_vector2d(64 * 50, 64 * 13));
+    tnt_entity_new(gfc_vector2d(64 * 51, 64 * 13));
+    tnt_entity_new(gfc_vector2d(64 * 52, 64 * 13));
+    damagezone_entity_new(gfc_vector2d(64 * 56, 64 * 10), 0.1f, gfc_vector2d(256, 256));
+    speaker_entity_new(gfc_vector2d(64 * 60, 64 * 13));
+
+
     //enemy_entity_new(gfc_vector2d(950, 700));
     slog("press [escape] to quit");
     /*main game loop*/
@@ -84,10 +110,15 @@ int main(int argc, char * argv[])
 		entity_manager_draw_all();
         collider_manager_draw_all();
         char buffer[32];
-        float temphp = roundf(player->health);
-        int inttemphp = temphp;
-        sprintf(buffer, "%s%i", "HP: ", inttemphp);
-        write_gui(buffer);
+        if (player->_inuse == 1)
+        {
+            float temphp = roundf(player->health);
+            int inttemphp = temphp;
+            int weapon = (int)player->data;
+            sprintf(buffer, "%s%i%s%i", "WEP: ", weapon, "  HP: ", inttemphp);
+            write_gui(buffer);
+        }
+        //write_dialogue("Oh boy! It's dialogue!!!!");
         draw_gui();
         //UI elements last
         gf2d_sprite_draw(
