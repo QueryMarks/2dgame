@@ -2,6 +2,9 @@
 #include "gf2d_graphics.h"
 #include "simple_logger.h"
 
+#include "entity.h"
+#include "player.h"
+
 //much of this is taken using https://stackoverflow.com/questions/22886500/how-to-render-text-in-sdl2
 //i will write something more elegant later this week when i have actual gui stuff to use
 

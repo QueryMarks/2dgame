@@ -38,7 +38,6 @@ void collider_manager_init(Uint32 max, Bool isDynamic) {
 	colliderManagerDynamic.colliderMax = max;
 	colliderManagerStatic.colliderMax = max;
 	atexit(collider_manager_close);
-	slog("initialized collider manager. it is dynamic? %d", isDynamic);	
 }
 void collider_free(Collider* self) {
 	if (!self)return;
@@ -149,7 +148,6 @@ Collider* collider_new(GFC_Rect rect, Bool isDynamic, Entity* entity) {
 	//if the collider is dynamic do the appropriate stuff for that
 	int i;
 	ColliderManager *colliderManager;
-	slog("we made i to collider_new without crashing");
 	if (isDynamic) {
 		colliderManager = &colliderManagerDynamic;
 	}

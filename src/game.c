@@ -54,6 +54,12 @@ int main(int argc, char * argv[])
     player = player_entity_new(gfc_vector2d(100,100));
     //enemy_entity_new(gfc_vector2d(400, 100));
     enemy_entity_new(gfc_vector2d(800, 300));
+
+    floater_enemy_entity_new(gfc_vector2d(1000, 800));
+
+    turret_enemy_entity_new(gfc_vector2d(1400, 500));
+    walky_enemy_entity_new(gfc_vector2d(900, 100));
+    bruiser_enemy_entity_new(gfc_vector2d(1500, 100));
     //enemy_entity_new(gfc_vector2d(950, 700));
     slog("press [escape] to quit");
     /*main game loop*/
@@ -78,7 +84,9 @@ int main(int argc, char * argv[])
 		entity_manager_draw_all();
         collider_manager_draw_all();
         char buffer[32];
-        sprintf(buffer, "%s%i", "time: ", time);
+        float temphp = roundf(player->health);
+        int inttemphp = temphp;
+        sprintf(buffer, "%s%i", "HP: ", inttemphp);
         write_gui(buffer);
         draw_gui();
         //UI elements last

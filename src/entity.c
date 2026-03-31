@@ -75,13 +75,17 @@ void entity_draw(Entity *self) {
 	if (self->sprite) {
 		GFC_Vector2D new_position;
 		gfc_vector2d_add(new_position, self->position, camera_get_offset());
+		GFC_Vector2D flip = gfc_vector2d(0,0);
+		if (self->facing == -1)flip = gfc_vector2d(1,0);
+		GFC_Vector2D* flipptr = &flip;
+
 		gf2d_sprite_draw(
 			self->sprite,
 			new_position,
 			&self->scale,
 			NULL,
 			NULL,
-			NULL,
+			flipptr,
 			NULL,
 			(Uint32)self->frame);
 	}

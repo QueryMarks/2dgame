@@ -7,6 +7,7 @@
 #include "collider.h"
 #include "gf2d_draw.h"
 #include "shot.h"
+#include "enemy.h"
 
 
 void player_think(Entity *self);
@@ -66,6 +67,8 @@ Entity *player_entity_new(GFC_Vector2D position)
 	self->free = player_free;
 	self->collide = player_collide;
 	player = self;
+	self->health = 100;
+	self->iframes = 0;
 	//self->collider = collider_new(128, 128, true);
 	return self;
 }
@@ -179,7 +182,6 @@ void player_think(Entity *self) {
 		}
 		else if (can_buoying == 1) {
 			self->velocity.y = 0;
-			slog("initiate buoy");
 			buoy_timer = 60;
 			can_buoying = 0;
 		}
@@ -200,7 +202,6 @@ void player_think(Entity *self) {
 			}
 			self->velocity.y -= buoy_accel;
 			
-			slog("buoying");
 		}
 		else {
 			float temp_gravity = gravity;
@@ -218,7 +219,6 @@ void player_think(Entity *self) {
 	if (gfc_input_key_pressed("'")) {
 		if (weapon < 6) {
 			weapon += 1;
-			slog("weapon is %d", weapon);
 		}
 		else {
 			weapon = 0;
@@ -256,7 +256,7 @@ void player_think(Entity *self) {
 		else if (weapon == 3) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
-			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(0, 0));
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32, -34));
 			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.25, 0), 8.0f, 0, 120);
 			shot->scale = gfc_vector2d(2, 2);
 			Collider* shotcollider = shot->collider;
@@ -267,8 +267,8 @@ void player_think(Entity *self) {
 		else if (weapon == 4) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
-			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32+(self->facing*48), -65));
-			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(0, 0),10.0f,MELEE,3);
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32 + (self->facing * 48), -65));
+			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(0, 0), 10.0f, MELEE, 3);
 			shot->scale = gfc_vector2d(2, 3);
 			Collider* shotcollider = shot->collider;
 			shotcollider->rect.w *= 2;
@@ -279,7 +279,7 @@ void player_think(Entity *self) {
 		else if (weapon == 5) {
 			Collider* collider = self->collider;
 			GFC_Vector2D shotpoint;
-			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32 *250 + (self->facing * 32 * 250), 0));
+			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32 * 250 + (self->facing * 32 * 250), 0));
 			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(0, 0), 4.0f, HITSCAN, 3);
 			shot->scale = gfc_vector2d(500, 0.1);
 			Collider* shotcollider = shot->collider;
@@ -293,7 +293,7 @@ void player_think(Entity *self) {
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32 + (self->facing * 32), 0));
 			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing, -0.25), 1.0f, EXPLOSIVE, 600);
-			
+
 		}
 
 	}
@@ -312,9 +312,12 @@ Entity* player_get() {
 
 void player_update(Entity* self) {
 	if (!self) return;
+	if (self->removeme == 1) {
+		slog("I'M DEAD AS A DOORNAIL!!!");
+	}
 	GFC_Vector2D new_position = gfc_vector2d(self->position.x + self->velocity.x, self->position.y + self->velocity.y);
 	if (self->collider) {
-		
+
 		new_position = player_check_move(self, new_position);
 	}
 	//self->position.x += self->velocity.x;
@@ -325,7 +328,7 @@ void player_update(Entity* self) {
 		self->frame = 0;
 	}
 	if (self->collider) {
-		Collider *collider = self->collider;
+		Collider* collider = self->collider;
 		if (collider->_inuse == 1) {
 			collider->rect = gfc_rect(self->position.x, self->position.y, 64, 64);
 			//gf2d_draw_rect(collider->rect, gfc_color(1, 0, 1, 1));
@@ -333,19 +336,47 @@ void player_update(Entity* self) {
 			//gf2d_draw_rect(ground_check_rect, gfc_color(0, 0, 1, 1));
 		}
 	}
+	if (self->iframes > 0) {
+		self->iframes -= 1;
+	}
 	camera_center_on(self->position);
 }
 
-void player_free(Entity *self) {
+void player_free(Entity* self) {
 	if (!self) return;
 }
 
 void player_collide(Entity* self, void* collider) {
 	if (!collider) return;
-	Collider *other = collider;
+	Collider* other = collider;
 	if (other->isDynamic) {
-		slog("collidedwith a dynamic thing");
+		slog("colliding with other");
+		if (other->team == ENEMY && other->entity->damager != 0 && self->iframes <= 0) {
+			float damage = 0.0f;
+			if (other->entity->damager == 2)
+			{
+				Enemy_Data *enemy_data = other->entity->data;
+				damage = enemy_data->damage;
+			}
+			else if (other->entity->damager == 1)
+			{
+				Shot_Data *shot_data = other->entity->data;
+				damage = shot_data->damage;
+			}
+			
+			self->health -= damage;
+			if (self->health <= 0){
+				self->removeme = 1;
+			}
+			else {
+				self->iframes = 60;
+				int dir = 1;
+				if ((self->position.x - other->entity->position.x) < 0) {
+					dir = -1;
+				}
+				self->velocity = gfc_vector2d(dir * 3, -3);
+			}
+		}
 	}
 }
-
 /*eol@eof*/

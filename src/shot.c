@@ -104,6 +104,7 @@ void shot_collide(Entity* self, void*collider) {
 	}
 	if (!self) return;
 	Collider* other = collider;
+	Collider* mine = self->collider;
 	Shot_Data* shot_data = self->data;
 	if (!other->isDynamic) {
 		if (shot_data->type == 0)
@@ -115,7 +116,7 @@ void shot_collide(Entity* self, void*collider) {
 			self->removeme = 1;
 		}
 	}
-	else if (other->team != 1) {
+	else if (other->team != mine->team) {
 		if (shot_data->type != HITSCAN)
 		{
 			self->removeme = 1;
