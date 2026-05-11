@@ -4,6 +4,11 @@
 #include "gfc_shape.h"
 #include "camera.h"
 #include "collider.h"
+#include "enemy.h"
+
+#include "spike.h"
+#include "damagezone.h"
+#include "speaker.h"
 
 void level_tile_layer_build(Level* level) {
 	if (!level) return;
@@ -179,7 +184,75 @@ Level* level_load(const char* filename)
 
 	level_tile_layer_build(level);
 	level_collision_layer_build(level);
-	return level;
+	//return level;
+	
+	SJson* entities = sj_object_get_value(ljson, "entities");
+	for (int i = 0; i < sj_array_get_count(entities); i++)
+	{
+		SJson* entity = sj_array_get_nth(entities, i);
+		float* entity_position_x = malloc(sizeof(float));
+		float* entity_position_y = malloc(sizeof(float));
+		const char* entity_name = malloc(sizeof(char[50]));
+		sj_object_get_value_as_float(entity, "pos_x", entity_position_x);
+		sj_object_get_value_as_float(entity, "pos_y", entity_position_y);
+		entity_name = sj_object_get_value_as_string(entity, "entity");
+
+		if (strcmp(entity_name, "walky") == 0)
+		{
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				walky_enemy_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y));
+			}
+		}
+		else if (strcmp(entity_name, "turret") == 0)
+		{
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				turret_enemy_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y));
+			}
+		}
+		else if (strcmp(entity_name, "floater") == 0)
+		{
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				floater_enemy_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y));
+			}
+		}
+		else if (strcmp(entity_name, "swinger") == 0)
+		{
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				enemy_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y));
+			}
+		}
+		else if (strcmp(entity_name, "bruiser") == 0)
+		{
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				bruiser_enemy_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y));
+			}
+		}
+
+		//////NON ENEMIES//////
+		else if (strcmp(entity_name, "spike") == 0)
+		{
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				spike_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), 40, gfc_vector2d(64, 64));
+			}
+		}
+		else if (strcmp(entity_name, "damagezone") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				damagezone_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), 40, gfc_vector2d(64, 64));
+			}
+		}
+		else if (strcmp(entity_name, "speaker") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				speaker_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y));
+			}
+		}
+		free(entity_position_x);
+		free(entity_position_y);
+		
+	}
+	
+	
+	
+
 	sj_free(json);
 	return level;
 }

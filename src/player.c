@@ -136,7 +136,7 @@ GFC_Vector2D player_check_move(Entity* self, GFC_Vector2D move_position) {
 }
 
 
-void player_think(Entity *self) {
+void player_think(Entity* self) {
 	if (!self) return;
 
 	if (collider_manager_check_static_collisions(ground_check_rect).h != 0)
@@ -145,6 +145,10 @@ void player_think(Entity *self) {
 		can_buoying = 1;
 		buoy_timer = 0;
 		float_timer = 60;
+	}
+	if (gfc_input_key_pressed)
+	{
+
 	}
 	if (gfc_input_key_down("d")) {
 		self->facing = 1;

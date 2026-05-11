@@ -52,7 +52,7 @@ void write_dialogue(const char* write) {
 	}
 
 	TTF_Font* font = TTF_OpenFont("fonts/DejaVuSans.ttf", 12);
-	SDL_Color writeColor = { 150, 100, 100 };
+	SDL_Color writeColor = { 250, 200, 200 };
 
 	//dialogueSprite->surface = gf2d_graphics_create_surface(300, 300);
 	if (dialogueSprite != NULL) {
@@ -89,7 +89,7 @@ void write_choices(const char* write, const char* write2) {
 	}
 
 	TTF_Font* font = TTF_OpenFont("fonts/DejaVuSans.ttf", 12);
-	SDL_Color writeColor = { 150, 100, 100 };
+	SDL_Color writeColor = { 250, 200, 200 };
 
 	//choice1->surface = gf2d_graphics_create_surface(300, 300);
 	if (choice1 != NULL) {

@@ -20,8 +20,6 @@
 #include "damagezone.h"
 #include "speaker.h"
 
-
-
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
@@ -62,17 +60,17 @@ int main(int argc, char * argv[])
     mouse = gf2d_sprite_load_all("images/pointer2.png",32,32,16,0);
     player = player_entity_new(gfc_vector2d(100,100));
     //enemy_entity_new(gfc_vector2d(400, 100));
-    enemy_entity_new(gfc_vector2d(800, 300));
+    /*enemy_entity_new(gfc_vector2d(800, 300));
 
     floater_enemy_entity_new(gfc_vector2d(1000, 800));
 
     turret_enemy_entity_new(gfc_vector2d(1400, 500));
-    walky_enemy_entity_new(gfc_vector2d(900, 100));
     bruiser_enemy_entity_new(gfc_vector2d(1500, 100));
+    */
     wall_entity_new(gfc_vector2d(64 * 31, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
     wall_entity_new(gfc_vector2d(64 * 32, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
-    wall_entity_new(gfc_vector2d(64 * 31, 64 * 8), EXPLOSIVE, gfc_vector2d(64, 128));
-    wall_entity_new(gfc_vector2d(64 * 32, 64 * 8),EXPLOSIVE,gfc_vector2d(64,128));
+    wall_entity_new(gfc_vector2d(64 * 31, 64 * 8), MELEE, gfc_vector2d(64, 128));
+    wall_entity_new(gfc_vector2d(64 * 32, 64 * 8),MELEE,gfc_vector2d(64,128));
 
     current_entity_new(gfc_vector2d(64 * 33, 64 * 10), gfc_vector2d(0, 1), gfc_vector2d(64, 128));
     current_entity_new(gfc_vector2d(64 * 33, 64 * 8), gfc_vector2d(0, 1), gfc_vector2d(64, 128));
