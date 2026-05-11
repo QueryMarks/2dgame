@@ -47,7 +47,6 @@ Entity* speaker_entity_new(GFC_Vector2D position)
 
 void speaker_think(Entity* self) {
 	Uint8* timer = self->data;
-	slog("my timer is %d", timer);
 	if (timer == 300)
 	{
 		write_dialogue("that's right it's ME your BEST BUD CLAMLET");

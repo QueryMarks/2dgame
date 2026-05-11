@@ -20,6 +20,9 @@
 #include "damagezone.h"
 #include "speaker.h"
 
+
+#include "window.h"
+
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
@@ -54,6 +57,8 @@ int main(int argc, char * argv[])
     SDL_ShowCursor(SDL_DISABLE);
     camera_set_size(gfc_vector2d(1200, 720));
     gfc_input_init("config/input.cfg");
+    window_manager_init(32);
+    window_new();
     /*demo setup*/
     level = level_load("maps/testlevel.json");
     level_setup_camera_bounds(level);
@@ -107,6 +112,7 @@ int main(int argc, char * argv[])
         level_draw(level);
 		entity_manager_draw_all();
         collider_manager_draw_all();
+        
         char buffer[32];
         if (player->_inuse == 1)
         {
@@ -118,6 +124,7 @@ int main(int argc, char * argv[])
         }
         //write_dialogue("Oh boy! It's dialogue!!!!");
         draw_gui();
+        window_manager_draw_all();
         //UI elements last
         gf2d_sprite_draw(
             mouse,

@@ -10,16 +10,33 @@
 
 
 /**
+* @purpose a system for window elements
+**/
+
+
+typedef struct Element_S Element;
+/**
 * @purpose This lets me use windows and menus and wenus
 **/
 typedef struct Window_S {
 	Uint8 _inuse; /**<flag for keeping track of memory usage*/
-	Sprite* windowSprite;
+	Uint8 hidden;
+	Sprite* sprite;
 	Sprite* textSprite;
 	//button goes here when we add it;
-	GFC_Vector2D windowPosition;
+	GFC_Vector2D position;
 	GFC_Vector2D textPosition;
 	TTF_Font* font;
+
+	GFC_List* elements;
+	GFC_List* focus_elements;
+	Element* focus;
+
+	void(*think)(struct Window_S* self);
+	void(*update)(struct Window_S* self);
+	void(*free)(struct Entity_S* self);
+
+	void* data;
 }Window;
 
 void window_manager_init(Uint32 max);
@@ -29,6 +46,8 @@ void window_manager_close();
 Window* window_new();
 
 void window_free(Window* self);
+
+void window_add_element(Window* self);
 
 void window_manager_think_all();
 
