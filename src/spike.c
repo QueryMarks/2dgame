@@ -48,7 +48,6 @@ Entity* spike_entity_new(GFC_Vector2D position, float damage, GFC_Vector2D size)
 	self->data = enemy_data;
 	self->solid = 1;
 	self->removeme = 0;
-	slog("finished becoming spike");
 }
 
 void spike_think(Entity* self) {

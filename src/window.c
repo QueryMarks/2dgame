@@ -44,11 +44,13 @@ void window_manager_init(Uint32 max)
 
 void window_manager_close()
 {
+	slog("we're closin da windo");
 	int i;
 	if (!windowManager.windowList)return;
 
 	for (i = 0; i < windowManager.windowMax; i++) 
 	{
+		if (&windowManager.windowList[i]._inuse != 1)continue;
 		window_free(&windowManager.windowList[i]);
 	}
 	free(windowManager.windowList);
@@ -70,8 +72,8 @@ Window* window_new() {
 		windowManager.windowList[i].hidden = 0;
 		windowManager.windowList[i].elements = malloc(sizeof(Element) * 32);
 		
-		Sprite* buttonSprite = gf2d_sprite_load_all("images/floater.png", 64, 64, 1, 0);
-		button_new(&windowManager.windowList[i], gfc_vector2d(100, 100), buttonSprite, gfc_vector2d(64, 64), onclick_close);
+		//Sprite* buttonSprite = gf2d_sprite_load_all("images/floater.png", 64, 64, 1, 0);
+		//button_new(&windowManager.windowList[i], gfc_vector2d(100, 100), buttonSprite, gfc_vector2d(64, 64), onclick_close);
 
 		return &windowManager.windowList[i];
 	}
@@ -135,7 +137,7 @@ void window_update(Window* self) {
 }
 
 void window_manager_update_all() {
-	//slog("drawing windows");
+	//slog("updating windows");
 	int i;
 	if (!windowManager.windowList) {
 		//slog("no window list to draw");
@@ -152,6 +154,15 @@ void window_manager_update_all() {
 void window_free(Window* self) {
 	if(!self)return;
 	if (self->sprite)gf2d_sprite_free(self->sprite);
+	if (self->elements != NULL) {
+		int j;
+		for (j = 0; j < 32; j++) {
+			if (self->elements[j]._inuse == 1) {
+				element_free(&self->elements[j]);
+			}
+		}
+	}
+	self->_inuse = false;
 }
 
 

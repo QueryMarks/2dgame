@@ -41,7 +41,6 @@ Entity* tnt_entity_new(GFC_Vector2D position)
 	int* timer = malloc(sizeof(int));
 	timer = -1;
 	self->data = timer;
-	slog("finished becoming tnt");
 }
 
 void tnt_think(Entity* self) {

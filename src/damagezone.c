@@ -47,7 +47,6 @@ Entity* damagezone_entity_new(GFC_Vector2D position, float damage, GFC_Vector2D 
 	self->data = my_damage;
 	self->solid = 0;
 	self->removeme = 0;
-	slog("finished becoming damagezone");
 }
 
 void damagezone_think(Entity* self) {

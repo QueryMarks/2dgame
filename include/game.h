@@ -17,9 +17,9 @@
 
 
 enum Gamestate_E{
-	TITLE,
-	MAIN,
-	EDITOR
+	GS_TITLE,
+	GS_MAIN,
+	GS_EDITOR
 };
 
 typedef struct Game_Manager_S {
@@ -29,10 +29,7 @@ typedef struct Game_Manager_S {
 	int gamestate;
 }Game_Manager;
 
-void game_load_title() {
+void game_start_title();
+void game_title_exit();
 
-}
-
-void game_load_level(const char* path) {
-
-}
+void game_start_level(const char* path);

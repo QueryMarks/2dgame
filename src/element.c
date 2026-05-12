@@ -1,12 +1,12 @@
 #include "element.h"
 #include "gfc_input.h"
 
-
+#include "game.h"
 
 void element_think(struct Element_S* self);
 void* button_update(struct Element_S* self);
 void* element_free(struct Element_S* self);
-void* onclick_close(struct Element_S* self);
+void onclick_close(struct Element_S* self);
 
 Element* element_new(Window *window) {
 	int i;
@@ -78,6 +78,7 @@ void* button_update(struct Element_S* self) {
 }
 void* element_free(struct Element_S* self) {
 	if (self->sprite)gf2d_sprite_free(self->sprite);
+	self->_inuse = false;
 }
 
 
@@ -88,13 +89,21 @@ void element_draw(Element* self) {
 	gf2d_sprite_draw_image(self->sprite, drawpos);
 };
 
-void* onclick_close(struct Element_S* self)
+void onclick_close(struct Element_S* self)
 {
 	int mx, my;
 	SDL_GetMouseState(&mx, &my);
-	slog("ONCLICK CLOSE HAPPENED");
 	if (gfc_point_in_rect(gfc_vector2d(mx, my), self->bounds)) {
 		self->window->hidden = 1;
 	}
 	
+}
+
+void onclick_start_level(struct Element_S* self)
+{
+	int mx, my;
+	SDL_GetMouseState(&mx, &my);
+	if (gfc_point_in_rect(gfc_vector2d(mx, my), self->bounds)) {
+		game_title_exit();
+	}
 }

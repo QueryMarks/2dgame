@@ -40,7 +40,12 @@ void entity_manager_close()
 	if (!entityManager.entityList)return;
 	for (i = 0; i < entityManager.entityMax;i++)
 	{
-		entity_free( &entityManager.entityList[i]);
+		if (&entityManager.entityList[i]._inuse == 1)
+		{
+			slog("freed 1 entity lololol");
+			entity_free(&entityManager.entityList[i]);
+		}
+		
 	}
 	free(entityManager.entityList);
 	memset(&entityManager,0,sizeof(EntityManager));

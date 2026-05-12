@@ -45,7 +45,6 @@ Entity* current_entity_new(GFC_Vector2D position, GFC_Vector2D direction, GFC_Ve
 	self->data = current_dir;
 	self->solid = 0;
 	self->removeme = 0;
-	slog("finished becoming current");
 }
 
 void current_think(Entity*self) {

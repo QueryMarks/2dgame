@@ -29,11 +29,133 @@
 
 static Game_Manager game_manager = { 0 };
 
+void game_start_title() {
+
+    game_manager.gamestate = GS_TITLE;
+    slog("title start");
+    Window* window = window_new();
+    Sprite* buttonSprite = gf2d_sprite_load_all("images/floater.png", 64, 64, 1, 0);
+    button_new
+    (
+        window, 
+        gfc_vector2d(100, 100), 
+        buttonSprite, 
+        gfc_vector2d(64, 64),
+        onclick_start_level
+    );
+    slog("made the window moment");
+
+
+
+}
+
+
+void game_start_level(const char* path) {
+    //window_new();
+    collider_manager_init(1024, false);
+    //collider_manager_init(1024, true);
+    entity_manager_init(1024);
+    window_manager_close();
+    game_manager.gamestate = GS_MAIN;
+
+    game_manager.level = level_load(path);
+    level_setup_camera_bounds(game_manager.level);
+
+    game_manager.player = player_entity_new(gfc_vector2d(100, 100));
+    //enemy_entity_new(gfc_vector2d(400, 100));
+    /*enemy_entity_new(gfc_vector2d(800, 300));
+
+    floater_enemy_entity_new(gfc_vector2d(1000, 800));
+
+    turret_enemy_entity_new(gfc_vector2d(1400, 500));
+    bruiser_enemy_entity_new(gfc_vector2d(1500, 100));
+    */
+    wall_entity_new(gfc_vector2d(64 * 31, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
+    wall_entity_new(gfc_vector2d(64 * 32, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
+    wall_entity_new(gfc_vector2d(64 * 31, 64 * 8), MELEE, gfc_vector2d(64, 128));
+    wall_entity_new(gfc_vector2d(64 * 32, 64 * 8), MELEE, gfc_vector2d(64, 128));
+
+    current_entity_new(gfc_vector2d(64 * 33, 64 * 10), gfc_vector2d(0, 1), gfc_vector2d(64, 128));
+    current_entity_new(gfc_vector2d(64 * 33, 64 * 8), gfc_vector2d(0, 1), gfc_vector2d(64, 128));
+
+    spike_entity_new(gfc_vector2d(64 * 44, 64 * 12), 30.0f, gfc_vector2d(64, 64));
+    tnt_entity_new(gfc_vector2d(64 * 49, 64 * 13));
+    tnt_entity_new(gfc_vector2d(64 * 50, 64 * 13));
+    tnt_entity_new(gfc_vector2d(64 * 51, 64 * 13));
+    tnt_entity_new(gfc_vector2d(64 * 52, 64 * 13));
+    damagezone_entity_new(gfc_vector2d(64 * 56, 64 * 10), 0.1f, gfc_vector2d(256, 256));
+    speaker_entity_new(gfc_vector2d(64 * 60, 64 * 13));
+    slog("loaded entire level");
+    window_manager_init(32);
+
+
+
+}
+
+void game_run_menu() {
+    gf2d_graphics_clear_screen();
+    window_manager_update_all();
+    window_manager_draw_all();
+    if (game_manager.gamestate == GS_MAIN)
+    {
+        game_start_level("maps/testlevel.json");
+    }
+}
+
+void game_title_exit() {
+    game_manager.gamestate = GS_MAIN;
+}
+
+void game_to_title() {
+    if (game_manager.gamestate == GS_MAIN) {
+        window_manager_close();
+        entity_manager_close();
+        collider_manager_close();
+        window_manager_init(32);
+        game_start_title();
+    }
+}
+
+
+void run_maingame()
+{
+    //ETHELYN think + update all
+
+    collider_manager_check_collisions();
+    entity_manager_think_all();
+    entity_manager_update_all();
+    window_manager_update_all();
+    gf2d_graphics_clear_screen();// clears drawing buffers
+    // all drawing should happen betweem clear_screen and next_frame
+        //backgrounds drawn first
+    level_draw(game_manager.level);
+    entity_manager_draw_all();
+    collider_manager_draw_all();
+
+    char buffer[32];
+    if (game_manager.player->_inuse == 1)
+    {
+        float temphp = roundf(game_manager.player->health);
+        int inttemphp = temphp;
+        int weapon = (int)game_manager.player->data;
+        sprintf(buffer, "%s%i%s%i", "WEP: ", weapon, "  HP: ", inttemphp);
+        write_gui(buffer);
+    }
+    //write_dialogue("Oh boy! It's dialogue!!!!");
+    draw_gui();
+    window_manager_draw_all();
+
+    if (gfc_input_key_pressed("0") == 1) {
+        game_to_title();
+    }
+}
+
+
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
-    const Uint8 * keys;
+    
     
     int mx,my;
     float mf = 0;
@@ -42,7 +164,6 @@ int main(int argc, char * argv[])
     Sprite* GUI;
     GFC_Color mouseGFC_Color = gfc_color8(255,120,180,255);
 
-    game_manager.gamestate = TITLE;
     
     
     /*program initializtion*/
@@ -58,43 +179,15 @@ int main(int argc, char * argv[])
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
-    collider_manager_init(1024, false);
-    //collider_manager_init(1024, true);
-	entity_manager_init(1024);
+    
     SDL_ShowCursor(SDL_DISABLE);
     camera_set_size(gfc_vector2d(1200, 720));
     gfc_input_init("config/input.cfg");
     window_manager_init(32);
-    window_new();
+    mouse = gf2d_sprite_load_all("images/pointer2.png", 32, 32, 16, 0);
     /*demo setup*/
-    level = level_load("maps/testlevel.json");
-    level_setup_camera_bounds(level);
-    mouse = gf2d_sprite_load_all("images/pointer2.png",32,32,16,0);
-    player = player_entity_new(gfc_vector2d(100,100));
-    //enemy_entity_new(gfc_vector2d(400, 100));
-    /*enemy_entity_new(gfc_vector2d(800, 300));
-
-    floater_enemy_entity_new(gfc_vector2d(1000, 800));
-
-    turret_enemy_entity_new(gfc_vector2d(1400, 500));
-    bruiser_enemy_entity_new(gfc_vector2d(1500, 100));
-    */
-    wall_entity_new(gfc_vector2d(64 * 31, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
-    wall_entity_new(gfc_vector2d(64 * 32, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
-    wall_entity_new(gfc_vector2d(64 * 31, 64 * 8), MELEE, gfc_vector2d(64, 128));
-    wall_entity_new(gfc_vector2d(64 * 32, 64 * 8),MELEE,gfc_vector2d(64,128));
-
-    current_entity_new(gfc_vector2d(64 * 33, 64 * 10), gfc_vector2d(0, 1), gfc_vector2d(64, 128));
-    current_entity_new(gfc_vector2d(64 * 33, 64 * 8), gfc_vector2d(0, 1), gfc_vector2d(64, 128));
-
-    spike_entity_new(gfc_vector2d(64 * 44, 64 * 12), 30.0f, gfc_vector2d(64, 64));
-    tnt_entity_new(gfc_vector2d(64 * 49, 64 * 13));
-    tnt_entity_new(gfc_vector2d(64 * 50, 64 * 13));
-    tnt_entity_new(gfc_vector2d(64 * 51, 64 * 13));
-    tnt_entity_new(gfc_vector2d(64 * 52, 64 * 13));
-    damagezone_entity_new(gfc_vector2d(64 * 56, 64 * 10), 0.1f, gfc_vector2d(256, 256));
-    speaker_entity_new(gfc_vector2d(64 * 60, 64 * 13));
-
+    //start_maingame();
+    game_start_title();
 
     //enemy_entity_new(gfc_vector2d(950, 700));
     slog("press [escape] to quit");
@@ -107,32 +200,23 @@ int main(int argc, char * argv[])
         SDL_GetMouseState(&mx,&my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
-        //ETHELYN think + update all
-        gfc_input_update();
-        keys = SDL_GetKeyboardState(NULL);
-        collider_manager_check_collisions();
-        entity_manager_think_all();
-        entity_manager_update_all();
-        window_manager_update_all();
-        gf2d_graphics_clear_screen();// clears drawing buffers
-        // all drawing should happen betweem clear_screen and next_frame
-            //backgrounds drawn first
-        level_draw(level);
-		entity_manager_draw_all();
-        collider_manager_draw_all();
         
-        char buffer[32];
-        if (player->_inuse == 1)
+        gfc_input_update();
+        const Uint8* keys;
+        keys = SDL_GetKeyboardState(NULL);
+
+
+        if (game_manager.gamestate == GS_MAIN)
         {
-            float temphp = roundf(player->health);
-            int inttemphp = temphp;
-            int weapon = (int)player->data;
-            sprintf(buffer, "%s%i%s%i", "WEP: ", weapon, "  HP: ", inttemphp);
-            write_gui(buffer);
+            run_maingame();
         }
-        //write_dialogue("Oh boy! It's dialogue!!!!");
-        draw_gui();
-        window_manager_draw_all();
+        else
+        {
+            game_run_menu();
+        }
+
+
+
         //UI elements last
         gf2d_sprite_draw(
             mouse,
@@ -150,8 +234,8 @@ int main(int argc, char * argv[])
         // exit condition
         //slog("Rendering at %f FPS",gf2d_graphics_get_frames_per_second());
     }
-    entity_free(player);
-    level_free(level);
+    entity_manager_close();
+    level_free(game_manager.level);
     slog("---==== END ====---");
     return 0;
 }

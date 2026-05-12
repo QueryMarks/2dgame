@@ -62,6 +62,8 @@ Element* button_new(
 
 void element_draw(Element* self);
 
-void* onclick_close(struct Element_S* self);
+void onclick_close(struct Element_S* self);
+
+void onclick_start_level(struct Slement_S* self);
 
 #endif
