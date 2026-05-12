@@ -22,21 +22,28 @@
 
 
 #include "window.h"
+#include "element.h"
+
+
+#include "game.h"
+
+static Game_Manager game_manager = { 0 };
 
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
     const Uint8 * keys;
-    Level* level;
     
     int mx,my;
     float mf = 0;
     int time = 0;
     Sprite *mouse;
     Sprite* GUI;
-    Entity *player;
     GFC_Color mouseGFC_Color = gfc_color8(255,120,180,255);
+
+    game_manager.gamestate = TITLE;
+    
     
     /*program initializtion*/
     init_logger("gf2d.log",0);
@@ -106,6 +113,7 @@ int main(int argc, char * argv[])
         collider_manager_check_collisions();
         entity_manager_think_all();
         entity_manager_update_all();
+        window_manager_update_all();
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
@@ -147,4 +155,7 @@ int main(int argc, char * argv[])
     slog("---==== END ====---");
     return 0;
 }
+
+
+
 /*eol@eof*/

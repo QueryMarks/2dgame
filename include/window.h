@@ -28,7 +28,7 @@ typedef struct Window_S {
 	GFC_Vector2D textPosition;
 	TTF_Font* font;
 
-	GFC_List* elements;
+	Element* elements;
 	GFC_List* focus_elements;
 	Element* focus;
 

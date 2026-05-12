@@ -22,29 +22,46 @@ typedef enum
 typedef enum
 {
 	ET_LABEL,
-	ET_BUTTON
+	ET_BUTTON,
+	ET_TEXT
 }ElementTypes;
 
 
 struct Element_S
 {
+	Uint8 _inuse;
 	int index;
 	GFC_TextLine name;
+	GFC_Vector2D position;
 	Sprite* sprite;
 	Uint8 canHasFocus;
 	Uint8 hasFocus;
 	GFC_Rect bounds;
 	int state;
+	int elementType;
 
 	void(*think)(struct Element_S* self);
 	void(*update)(struct Element_S* self);
 	void(*free)(struct Element_S* self);
-	void(*draw)(struct Element_S* self);
-	Window window;
+	void(*onclick)(struct Element_S* self);
+	Window* window;
 	void* data;
 };
 
 
+Element* element_new(Window* window);
 
+Element* button_new(
+	Window* window,
+	GFC_Vector2D position,
+	Sprite* sprite,
+	GFC_Vector2D size,
+	void* onclick);
+
+
+
+void element_draw(Element* self);
+
+void* onclick_close(struct Element_S* self);
 
 #endif

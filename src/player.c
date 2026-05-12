@@ -146,10 +146,6 @@ void player_think(Entity* self) {
 		buoy_timer = 0;
 		float_timer = 60;
 	}
-	if (gfc_input_key_pressed)
-	{
-
-	}
 	if (gfc_input_key_down("d")) {
 		self->facing = 1;
 		if (self->velocity.x + move_accel < move_max)
