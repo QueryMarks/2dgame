@@ -106,14 +106,18 @@ void game_title_exit() {
     game_manager.gamestate = GS_MAIN;
 }
 
+void game_state_change(int state) {
+    game_manager.gamestate = state;
+}
+
 void game_to_title() {
-    if (game_manager.gamestate == GS_MAIN) {
+    //if (game_manager.gamestate == GS_MAIN) {
         window_manager_close();
         entity_manager_close();
         collider_manager_close();
         window_manager_init(32);
         game_start_title();
-    }
+    //}
 }
 
 
@@ -145,7 +149,7 @@ void run_maingame()
     draw_gui();
     window_manager_draw_all();
 
-    if (gfc_input_key_pressed("0") == 1) {
+    if (game_manager.gamestate == GS_TITLE) {
         game_to_title();
     }
 }

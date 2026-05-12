@@ -9,6 +9,7 @@
 #include "shot.h"
 #include "enemy.h"
 
+#include "game.h"
 
 void player_think(Entity *self);
 
@@ -374,7 +375,8 @@ void player_collide(Entity* self, void* collider) {
 			
 			self->health -= damage;
 			if (self->health <= 0){
-				self->removeme = 1;
+				//return to the title screen
+				game_state_change(GS_TITLE);
 			}
 			else {
 				self->iframes = 60;
