@@ -48,6 +48,7 @@ Entity *player_entity_new(GFC_Vector2D position)
 		slog("Failed to create player entity");
 		return NULL;
 	}
+	self->entity_type = "player";
 	self->sprite = gf2d_sprite_load_all(
 		"images/player.png",
 		64,

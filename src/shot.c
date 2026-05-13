@@ -21,6 +21,7 @@ Entity* shot_entity_new(GFC_Vector2D position, GFC_Vector2D direction, float dam
 	Entity* self;
 	self = entity_new();
 	if (!self)return NULL;
+	self->entity_type = "shot";
 	self->sprite = gf2d_sprite_load_all(
 		"images/shot.png",
 		32,

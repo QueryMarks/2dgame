@@ -25,6 +25,7 @@ Entity* enemy_entity_new(GFC_Vector2D position)
 		slog("Failed to create enemy entity");
 		return NULL;
 	}
+	self->entity_type = "swinger";
 	self->sprite = gf2d_sprite_load_all(
 		"images/space_bug_top.png",
 		128,
@@ -194,6 +195,7 @@ Entity* floater_enemy_entity_new(GFC_Vector2D position)
 		slog("Failed to create floater entity");
 		return NULL;
 	}
+	self->entity_type = "floater";
 	self->sprite = gf2d_sprite_load_all(
 		"images/floater.png",
 		64,
@@ -411,6 +413,7 @@ Entity* turret_enemy_entity_new(GFC_Vector2D position)
 		slog("Failed to create floater entity");
 		return NULL;
 	}
+	self->entity_type = "turret";
 	self->sprite = gf2d_sprite_load_all(
 		"images/turret.png",
 		64,
@@ -564,6 +567,7 @@ Entity* walky_enemy_entity_new(GFC_Vector2D position)
 		slog("Failed to create floater entity");
 		return NULL;
 	}
+	self->entity_type = "walky";
 	self->sprite = gf2d_sprite_load_all(
 		"images/walky.png",
 		64,
@@ -741,6 +745,7 @@ Entity* bruiser_enemy_entity_new(GFC_Vector2D position)
 		1,
 		0
 	);
+	self->entity_type = "bruiser";
 	self->position = position;
 	self->frame = 0;
 	self->scale = gfc_vector2d(1, 1);

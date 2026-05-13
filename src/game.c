@@ -29,6 +29,13 @@
 
 static Game_Manager game_manager = { 0 };
 
+
+
+int get_gamestate() {
+    return game_manager.gamestate;
+}
+
+
 void game_start_title() {
 
     game_manager.gamestate = GS_TITLE;
@@ -48,6 +55,9 @@ void game_start_title() {
 
 
 }
+
+
+
 
 
 void game_start_level(const char* path) {
@@ -92,15 +102,10 @@ void game_start_level(const char* path) {
 
 }
 
-void game_run_menu() {
-    gf2d_graphics_clear_screen();
-    window_manager_update_all();
-    window_manager_draw_all();
-    if (game_manager.gamestate == GS_MAIN)
-    {
-        game_start_level("maps/testlevel.json");
-    }
-}
+
+
+
+
 
 void game_title_exit() {
     game_manager.gamestate = GS_MAIN;
@@ -124,7 +129,7 @@ void game_to_title() {
 void run_maingame()
 {
     //ETHELYN think + update all
-
+    slog("running maingame");
     collider_manager_check_collisions();
     entity_manager_think_all();
     entity_manager_update_all();
@@ -154,6 +159,124 @@ void run_maingame()
     }
 }
 
+void change_placer() {
+    game_manager.
+}
+
+
+void game_edit_level(const char* path) {
+    editor_init();
+    collider_manager_init(1024, false);
+    //collider_manager_init(1024, true);
+    entity_manager_init(1024);
+    window_manager_close();
+    game_manager.gamestate = GS_EDITOR;
+
+    game_manager.level = level_load(path);
+    level_setup_camera_bounds(game_manager.level);
+
+    game_manager.player = player_entity_new(game_manager.level->playerSpawn);
+    window_manager_init(32);
+    Window* level_editor_window = window_new();
+    level_editor_window->sprite = gf2d_sprite_load_all("images/editorbox.png", 450, 898, 1, 1);
+    level_editor_window->position = gfc_vector2d(798, 0);
+    Sprite* buttonsprite = gf2d_sprite_load_all("images/walky.png", 64, 64, 1, 1);
+    button_new(level_editor_window, gfc_vector2d(100, 300),buttonsprite, gfc_vector2d(64,64), change_placer);
+    
+    camera_enable_binding(0);
+}
+void game_start_editor() {
+    slog("started editor");
+    game_edit_level("maps/template.json");
+}
+
+
+
+void game_run_editor() {
+    gf2d_graphics_clear_screen();
+    level_draw(game_manager.level);
+    window_manager_update_all();
+    collider_manager_draw_all();
+    entity_manager_draw_all();
+    window_manager_draw_all();
+
+    if (game_manager.gamestate == GS_MAIN)
+    {
+        game_start_level("maps/testlevel.json");
+    }
+
+    int camera_speed = 5;
+    GFC_Vector2D new_camera_position = camera_get_position();
+    if (gfc_input_key_down("s")) {
+        new_camera_position.y += camera_speed;
+    }
+    if (gfc_input_key_down("w"))
+    {
+        new_camera_position.y -= camera_speed;
+    }
+    if (gfc_input_key_down("d")) {
+        new_camera_position.x += camera_speed;
+    }
+    if (gfc_input_key_down("a"))
+    {
+        new_camera_position.x -= camera_speed;
+    }
+
+    int mx, my;
+    SDL_GetMouseState(&mx, &my);
+    //add menu stuff here, before we add the offset for placing stuff
+
+
+
+    mx -= camera_get_offset().x;
+    my -= camera_get_offset().y;
+    if (gfc_input_key_pressed("1")) {
+        bruiser_enemy_entity_new(gfc_vector2d(mx, my));
+    }
+    if (gfc_input_key_pressed("2")) {
+        int tile_x = mx / 64;
+        int tile_y = my / 64;
+        if (tile_x >= 0
+            && tile_x < game_manager.level->tileMapWidth
+            && tile_y >= 0
+            && tile_y < game_manager.level->tileMapHeight)
+        {
+            slog("building tile at %i, %i", tile_x, tile_y);
+            int index = tile_x + (tile_y * game_manager.level->tileMapWidth);
+            game_manager.level->tileMap[index] = 1;
+            level_refresh_tiles(game_manager.level);
+        }
+        
+    }
+    if (gfc_input_key_pressed("p"))
+    {
+        game_manager.player->position.x = mx;
+        game_manager.player->position.y = my;
+    }
+
+    camera_set_position(new_camera_position);
+
+
+    gfc_input_update();
+    const Uint8* keys;
+    keys = SDL_GetKeyboardState(NULL);
+    if (keys[SDL_SCANCODE_RETURN])level_save(game_manager.level);
+}
+
+
+void game_run_menu() {
+    gf2d_graphics_clear_screen();
+    window_manager_update_all();
+    window_manager_draw_all();
+    if (game_manager.gamestate == GS_MAIN)
+    {
+        game_start_level("maps/testlevel.json");
+    }
+    gfc_input_update();
+    const Uint8* keys;
+    keys = SDL_GetKeyboardState(NULL);
+    if (keys[SDL_SCANCODE_SPACE])game_start_editor();
+}
 
 int main(int argc, char * argv[])
 {
@@ -214,9 +337,13 @@ int main(int argc, char * argv[])
         {
             run_maingame();
         }
-        else
+        else if (game_manager.gamestate == GS_TITLE)
         {
             game_run_menu();
+        }
+        else  if (game_manager.gamestate == GS_EDITOR)
+        {
+            game_run_editor();
         }
 
 

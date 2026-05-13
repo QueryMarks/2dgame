@@ -33,3 +33,5 @@ void game_start_title();
 void game_title_exit();
 
 void game_start_level(const char* path);
+
+int get_gamestate();

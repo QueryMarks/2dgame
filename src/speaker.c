@@ -18,6 +18,7 @@ Entity* speaker_entity_new(GFC_Vector2D position)
 		slog("failed to create speaker");
 		return NULL;
 	}
+	self->entity_type = "speaker";
 	self->sprite = gf2d_sprite_load_all(
 		"images/speaker.png",
 		64,

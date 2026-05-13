@@ -5,9 +5,12 @@
 #include "gfc_types.h"
 #include "gf2d_sprite.h"
 
+#include "simple_json.h"
+
 /**
 * @purpose writing this to create the entity system
 **/
+
 
 typedef struct Entity_S
 {
@@ -30,6 +33,7 @@ typedef struct Entity_S
 	void (*postupdate)(struct Entity_S* self);
 	void *data;									/**<for ad hoc addition data for the entity*/
 	void* collider;
+	const char* entity_type;
 }Entity;
 
 /**
@@ -75,6 +79,8 @@ void entity_manager_update_all();
 * @brief run the draw functions for all active entities
 */
 void entity_manager_draw_all();
+
+SJson* entities_for_json();
 
 
 #endif

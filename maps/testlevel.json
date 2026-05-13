@@ -27,37 +27,39 @@
 
 		"entities": 
 		[
-		{
-			"entity": "walky",
-			"pos_x": 800.0,
-			"pos_y": 400.0
-		},
-		{
-			"entity": "bruiser",
-			"pos_x": 500.0,
-			"pos_y": 400.0
-		},
-		{
-			"entity": "turret",
-			"pos_x": 300.0,
-			"pos_y": 400.0
-		},
-		{
-			"entity": "floater",
-			"pos_x": 400.0,
-			"pos_y": 100.0
-		},
-		{
-			"entity": "swinger",
-			"pos_x": 1000.0,
-			"pos_y": 400.0
-		},
-		{
-			"entity": "spike",
-			"pos_x": 64.0,
-			"pos_y": 64.0
-		}
-		]
+			{
+				"entity": "walky",
+				"pos_x": 800.0,
+				"pos_y": 400.0
+			},
+			{
+				"entity": "bruiser",
+				"pos_x": 500.0,
+				"pos_y": 400.0
+			},
+			{
+				"entity": "turret",
+				"pos_x": 300.0,
+				"pos_y": 400.0
+			},
+			{
+				"entity": "floater",
+				"pos_x": 400.0,
+				"pos_y": 100.0
+			},
+			{
+				"entity": "swinger",
+				"pos_x": 1000.0,
+				"pos_y": 400.0
+			},
+			{
+				"entity": "spike",
+				"pos_x": 64.0,
+				"pos_y": 64.0
+			}
+		],
+		"player_spawn_x":  256.0,
+		"player_spawn_y":  256.0
 
 	}
 }

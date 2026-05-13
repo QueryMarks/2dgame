@@ -94,6 +94,78 @@ void level_collision_layer_build(Level* level) {
 	slog("finished making level collisions");
 }
 
+SJson* entityJson(const char* type, GFC_Vector2D pos)
+{
+	SJson* entity_json = sj_object_new();
+	SJson* entity = sj_new_str(type);
+	SJson* pos_x = sj_new_float(pos.x);
+	SJson* pos_y = sj_new_float(pos.y);
+
+
+	sj_object_insert(entity_json, "entity", entity);
+	sj_object_insert(entity_json, "pos_x", pos_x);
+	sj_object_insert(entity_json, "pos_y", pos_y);
+	return entity_json;
+}
+
+void level_save(Level* level)
+{
+	SJson* json = sj_object_new();
+	SJson* ljson = sj_object_new();
+
+	
+	SJson* background = sj_new_str("images/backgrounds/screenshot.png");
+	sj_object_insert(ljson, "background", background);
+	SJson* tileSet = sj_new_str("images/tiles-big.png");
+	sj_object_insert(ljson, "tileSet", tileSet);
+	SJson* frame_w = sj_new_int(64);
+	sj_object_insert(ljson, "frame_w", frame_w);
+	SJson* frame_h = sj_new_int(64);
+	sj_object_insert(ljson, "frame_h", frame_h);
+	SJson* frames_per_line = sj_new_int(1);
+	sj_object_insert(ljson, "frames_per_line", frames_per_line);
+
+	slog("we made it to tilemap");
+	SJson* tileMap = sj_array_new();
+	for (int i = 0; i < level->tileMapHeight; i++)
+	{
+		SJson* tileMapRow = sj_array_new();
+		for (int j = 0; j < level->tileMapWidth; j++)
+		{
+			Uint8 tile = level->tileMap[j + (i*level->tileMapWidth)];
+			slog("doing tile %i", tile);
+			SJson* mapValue = sj_new_uint8(tile);
+			sj_array_append(tileMapRow, mapValue);
+		}
+		sj_array_append(tileMap, tileMapRow);
+	}
+
+	sj_object_insert(ljson, "tileMap", tileMap);
+	slog("wrote tilemap");
+
+
+
+	slog("we got before entities");
+	
+
+
+	SJson* entities = entities_for_json();
+	sj_object_insert(ljson, "entities", entities);
+	slog("we got before player spawn");
+
+	SJson* player_spawn_x = sj_new_float(64.0);
+	SJson* player_spawn_y = sj_new_float(256.0);
+	sj_object_insert(ljson, "player_spawn_x", player_spawn_x);
+	sj_object_insert(ljson, "player_spawn_y", player_spawn_y);
+
+	slog("wrote the player spawn");
+	sj_object_insert(json, "level", ljson);
+	sj_save(json, "working.json");
+	slog("wrote the json");
+	sj_object_free(json);
+}
+
+
 Level* level_load(const char* filename)
 {
 	Level* level = NULL;
@@ -250,7 +322,16 @@ Level* level_load(const char* filename)
 		
 	}
 	
-	
+	slog("setting spawn");
+	///////player spawn////////
+	float* player_x = malloc(sizeof(float));
+	float* player_y = malloc(sizeof(float));
+	sj_object_get_value_as_float(ljson, "player_spawn_x", player_x);
+	sj_object_get_value_as_float(ljson, "player_spawn_y", player_y);
+	level->playerSpawn = gfc_vector2d(*player_x, *player_y);
+	free(player_x);
+	free(player_y);
+	slog("set spawn");
 	
 
 	sj_free(json);
@@ -372,6 +453,13 @@ void level_setup_camera_bounds(Level* level)
 	camera_enable_binding(1);
 	slog("finished level_setup_camera_bounds()");
 }
+
+level_refresh_tiles(Level* level)
+{
+	level_tile_layer_build(level);
+	level_collision_layer_build(level);
+}
+
 
 
 /*eol@eof*/

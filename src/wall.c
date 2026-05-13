@@ -18,6 +18,7 @@ Entity* wall_entity_new(GFC_Vector2D position, int damagetype, GFC_Vector2D size
 		return NULL;
 	}
 	if (damagetype == EXPLOSIVE) {
+		self->entity_type = "wall_explosive";
 		self->sprite = gf2d_sprite_load_all(
 			"images/wall_explosive.png",
 			64,
@@ -27,6 +28,7 @@ Entity* wall_entity_new(GFC_Vector2D position, int damagetype, GFC_Vector2D size
 		);
 	}
 	else if (damagetype == MELEE) {
+		self->entity_type = "wall_melee";
 		self->sprite = gf2d_sprite_load_all(
 			"images/wall_melee.png",
 			64,

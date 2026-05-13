@@ -83,7 +83,7 @@ Window* window_new() {
 void window_draw(Window* self) {
 	if (!self)return;
 	if (self->hidden == 0) {
-		gf2d_sprite_draw_image(self->sprite, gfc_vector2d(200, 200));
+		gf2d_sprite_draw_image(self->sprite, self->position);
 		if (self->elements != NULL) {
 			int j;
 			for (j = 0; j < 32; j++) {

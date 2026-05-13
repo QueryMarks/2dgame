@@ -17,6 +17,7 @@ Entity* tnt_entity_new(GFC_Vector2D position)
 		slog("failed to create tnt");
 		return NULL;
 	}
+	self->entity_type = "tnt";
 	self->sprite = gf2d_sprite_load_all(
 		"images/tnt.png",
 		64,

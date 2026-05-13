@@ -18,6 +18,7 @@ Entity* damagezone_entity_new(GFC_Vector2D position, float damage, GFC_Vector2D 
 		slog("failed to create damagezone");
 		return NULL;
 	}
+	self->entity_type = "damagezone";
 	self->sprite = gf2d_sprite_load_all(
 		"images/damagezone.png",
 		64,
