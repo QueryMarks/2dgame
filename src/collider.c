@@ -41,6 +41,7 @@ void collider_manager_init(Uint32 max, Bool isDynamic) {
 }
 void collider_free(Collider* self) {
 	if (!self)return;
+	self->_inuse = 0;
 	memset(self, 0, sizeof(Collider));
 	//if (self->collider_free)self->collider_free(self);
 }

@@ -26,5 +26,6 @@ void editor_change_entity();
 void editor_change_tile();
 void editor_place_entity(GFC_Vector2D position);
 void editor_place_tile(int tile_x, int tile_y);
+void editor_clear(int mx, int my);
 
 #endif

@@ -194,7 +194,7 @@ void game_run_editor() {
     gf2d_graphics_clear_screen();
     level_draw(game_manager.level);
     window_manager_update_all();
-    collider_manager_draw_all();
+    //collider_manager_draw_all();
     entity_manager_draw_all();
     window_manager_draw_all();
 
@@ -242,6 +242,10 @@ void game_run_editor() {
             editor_place_tile(tile_x, tile_y);
         }
         
+    }
+    if (gfc_input_key_pressed("3"))
+    {
+        editor_clear(mx, my);
     }
     if (gfc_input_key_pressed("p"))
     {

@@ -190,4 +190,24 @@ void postupdate(Entity* self) {
 	}
 }
 
+void clear_entities_at_point(GFC_Vector2D point)
+{
+	for (int i = 0; i < entityManager.entityMax; i++)
+	{
+		slog("we're talkin about clearing some entities");
+		if (entityManager.entityList[i]._inuse == 1)
+		{
+			if (strcmp(entityManager.entityList[i].entity_type, "player") != 0) {
+				slog("we're making the rect.");
+				GFC_Rect rect = gfc_rect(entityManager.entityList[i].position.x, entityManager.entityList[i].position.y, 64, 64);
+				if (gfc_point_in_rect(point, rect)) {
+					entityManager.entityList[i].free(&entityManager.entityList[i]);
+					entityManager.entityList[i]._inuse = 0;
+				}
+			}
+		}
+		
+	}
+}
+
 /*eol@eof*/

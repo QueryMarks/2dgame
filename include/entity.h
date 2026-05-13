@@ -81,6 +81,7 @@ void entity_manager_update_all();
 void entity_manager_draw_all();
 
 SJson* entities_for_json();
+void clear_entities_at_point(GFC_Vector2D point);
 
 
 #endif

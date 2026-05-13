@@ -4,7 +4,7 @@
 
 #include "enemy.h"
 #include "level.h"
-
+#include "camera.h"
 
 static Editor _editor = {0};
 
@@ -30,7 +30,6 @@ void editor_init(Level* level)
 		button_new(level_editor_window, gfc_vector2d(100, 300), walky, gfc_vector2d(64, 64), editor_change_entity);
 	_editor.tile_button =
 		button_new(level_editor_window, gfc_vector2d(100, 500), tiles, gfc_vector2d(64, 64), editor_change_tile);
-	_editor.tile_button->frame = 1;
 	slog("checkpoint 2 editor init");
 	_editor.entities_max = _editor.sprite_array->count-1;
 	_editor.tiles_max = 4;
@@ -90,4 +89,23 @@ void editor_place_tile(int tile_x, int tile_y) {
 	int index = tile_x + (tile_y * _editor.level->tileMapWidth);
 	_editor.level->tileMap[index] = _editor.tile_index + 1;
 	level_refresh_tiles(_editor.level);
+}
+
+void editor_clear(int mx_offset, int my_offset)
+{
+	int mx = mx_offset + camera_get_offset().x;
+	int my = my_offset + camera_get_offset().y;
+	int tile_x = mx / 64;
+	int tile_y = my / 64;
+	if (tile_x >= 0
+		&& tile_x < _editor.level->tileMapWidth
+		&& tile_y >= 0
+		&& tile_y < _editor.level->tileMapHeight)
+	{
+		int index = tile_x + (tile_y * _editor.level->tileMapWidth);
+		_editor.level->tileMap[index] = 0;
+		level_refresh_tiles(_editor.level);
+	}
+	clear_entities_at_point(gfc_vector2d(mx_offset, my_offset));
+
 }
