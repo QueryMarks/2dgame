@@ -46,6 +46,7 @@ struct Element_S
 	void(*onclick)(struct Element_S* self);
 	Window* window;
 	void* data;
+	float frame;
 };
 
 

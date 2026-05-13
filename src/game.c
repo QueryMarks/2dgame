@@ -24,6 +24,8 @@
 #include "window.h"
 #include "element.h"
 
+#include "editor.h"
+
 
 #include "game.h"
 
@@ -41,7 +43,7 @@ void game_start_title() {
     game_manager.gamestate = GS_TITLE;
     slog("title start");
     Window* window = window_new();
-    Sprite* buttonSprite = gf2d_sprite_load_all("images/floater.png", 64, 64, 1, 0);
+    Sprite* buttonSprite = gf2d_sprite_load_all("images/floater.png", 64, 64, 1, 1);
     button_new
     (
         window, 
@@ -159,8 +161,8 @@ void run_maingame()
     }
 }
 
-void change_placer() {
-    game_manager.
+void onclick_editor_entity_cycle() {
+    editor_change_entity();
 }
 
 
@@ -171,17 +173,13 @@ void game_edit_level(const char* path) {
     entity_manager_init(1024);
     window_manager_close();
     game_manager.gamestate = GS_EDITOR;
-
+    window_manager_init(32);
     game_manager.level = level_load(path);
     level_setup_camera_bounds(game_manager.level);
-
+    editor_init(game_manager.level);
     game_manager.player = player_entity_new(game_manager.level->playerSpawn);
-    window_manager_init(32);
-    Window* level_editor_window = window_new();
-    level_editor_window->sprite = gf2d_sprite_load_all("images/editorbox.png", 450, 898, 1, 1);
-    level_editor_window->position = gfc_vector2d(798, 0);
-    Sprite* buttonsprite = gf2d_sprite_load_all("images/walky.png", 64, 64, 1, 1);
-    button_new(level_editor_window, gfc_vector2d(100, 300),buttonsprite, gfc_vector2d(64,64), change_placer);
+    
+    
     
     camera_enable_binding(0);
 }
@@ -231,7 +229,7 @@ void game_run_editor() {
     mx -= camera_get_offset().x;
     my -= camera_get_offset().y;
     if (gfc_input_key_pressed("1")) {
-        bruiser_enemy_entity_new(gfc_vector2d(mx, my));
+        editor_place_entity(gfc_vector2d(mx, my));
     }
     if (gfc_input_key_pressed("2")) {
         int tile_x = mx / 64;
@@ -241,10 +239,7 @@ void game_run_editor() {
             && tile_y >= 0
             && tile_y < game_manager.level->tileMapHeight)
         {
-            slog("building tile at %i, %i", tile_x, tile_y);
-            int index = tile_x + (tile_y * game_manager.level->tileMapWidth);
-            game_manager.level->tileMap[index] = 1;
-            level_refresh_tiles(game_manager.level);
+            editor_place_tile(tile_x, tile_y);
         }
         
     }

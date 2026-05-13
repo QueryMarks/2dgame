@@ -5,7 +5,6 @@
 
 void element_think(struct Element_S* self);
 void* button_update(struct Element_S* self);
-void* element_free(struct Element_S* self);
 void onclick_close(struct Element_S* self);
 
 Element* element_new(Window *window) {
@@ -26,6 +25,7 @@ Element* element_new(Window *window) {
 
 		window->elements[i].update = button_update;
 		window->elements[i].onclick = onclick_close;
+		window->elements[i].frame = 0;
 
 		return &window->elements[i];
 	}
@@ -60,9 +60,10 @@ Element* button_new(
 		window->elements[i].elementType = ET_BUTTON;
 		window->elements[i].bounds = gfc_rect(window->elements[i].position.x + window->position.x, window->elements[i].position.y + window->position.y, 64, 64);
 
-
+		window->elements[i].frame = 0;
 		window->elements[i].update = button_update;
 		window->elements[i].onclick = onclick;
+		return &window->elements[i];
 	}
 }
 
@@ -71,12 +72,17 @@ void element_think(struct Element_S* self) {
 }
 void* button_update(struct Element_S* self) {
 	//slog("i am SOOOOOOO button updating");
-	if (gfc_input_key_pressed("1")) {
-		self->onclick(self);
+	if (gfc_input_key_pressed("b")) {
+		int mx, my;
+		SDL_GetMouseState(&mx, &my);
+		if (gfc_point_in_rect(gfc_vector2d(mx, my), self->bounds))
+		{
+			self->onclick(self);
+		}
 	}
-	return;
 }
-void* element_free(struct Element_S* self) {
+
+void element_free(struct Element_S* self) {
 	if (self->sprite)gf2d_sprite_free(self->sprite);
 	self->_inuse = false;
 }
@@ -86,24 +92,16 @@ void element_draw(Element* self) {
 	if (!self)return;
 	GFC_Vector2D drawpos;
 	gfc_vector2d_add(drawpos, self->position, self->window->position);
-	gf2d_sprite_draw_image(self->sprite, drawpos);
+	gf2d_sprite_draw(self->sprite, drawpos,NULL,NULL,NULL,NULL,NULL, (Uint32)self->frame);
 };
 
 void onclick_close(struct Element_S* self)
 {
-	int mx, my;
-	SDL_GetMouseState(&mx, &my);
-	if (gfc_point_in_rect(gfc_vector2d(mx, my), self->bounds)) {
-		self->window->hidden = 1;
-	}
+	self->window->hidden = 1;
 	
 }
 
 void onclick_start_level(struct Element_S* self)
 {
-	int mx, my;
-	SDL_GetMouseState(&mx, &my);
-	if (gfc_point_in_rect(gfc_vector2d(mx, my), self->bounds)) {
-		game_title_exit();
-	}
+	game_title_exit();
 }
