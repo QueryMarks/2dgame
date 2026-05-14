@@ -1,10 +1,14 @@
 #include "element.h"
 #include "gfc_input.h"
+#include "gf2d_graphics.h"
+
+#include "SDL_ttf.h"
 
 #include "game.h"
 
 void element_think(struct Element_S* self);
 void* button_update(struct Element_S* self);
+void* text_update(struct Element_S* self);
 void onclick_close(struct Element_S* self);
 
 Element* element_new(Window *window) {
@@ -67,6 +71,65 @@ Element* button_new(
 	}
 }
 
+Element* text_new(
+	Window* window,
+	GFC_Vector2D position,
+	GFC_Vector2D size,
+	const char* text
+	)
+{
+	int i;
+	if (!window->elements) {
+		slog("this window has not initialized its elements list i suppose");
+		return NULL;
+	}
+	for (i = 0; i < 32; i++) {
+		if (window->elements[i]._inuse == 1) continue;
+		window->elements[i]._inuse = 1;
+		window->elements[i].position = position;
+		
+
+		window->elements[i].window = window;
+		window->elements[i].elementType = ET_TEXT;
+		window->elements[i].bounds = gfc_rect(window->elements[i].position.x + window->position.x, window->elements[i].position.y + window->position.y, 64, 64);
+
+
+		window->elements[i].update = text_update;
+		
+		slog("made it to ttf init");
+		
+		if (TTF_Init() != 0) {
+			slog("something's wrong with the ttf diffuser");
+			TTF_Quit();
+			return;
+		}
+
+		TTF_Font* font = TTF_OpenFont("fonts/DejaVuSans.ttf", 12);
+		SDL_Color writeColor = { 250, 200, 200 };
+
+		Sprite* mySprite = gf2d_sprite_new();
+		mySprite->surface = TTF_RenderText_Solid(font, text, writeColor);
+		if (mySprite->surface == NULL) {
+			slog("the surface didn't work");
+		}
+		// = surfaceMessage;
+		mySprite->texture = SDL_CreateTextureFromSurface(gf2d_graphics_get_renderer(), mySprite->surface);
+		if (mySprite->texture == NULL) {
+			slog("the texture didn't work");
+		}
+
+		mySprite->frame_w = size.x;
+		mySprite->frame_h = size.y;
+		mySprite->frames_per_line = 1;
+		window->elements[i].sprite = mySprite;
+		window->elements[i].frame = 0;
+
+
+		return &window->elements[i];
+	}
+}
+
+
 void element_think(struct Element_S* self) {
 	return;
 }
@@ -80,6 +143,11 @@ void* button_update(struct Element_S* self) {
 			self->onclick(self);
 		}
 	}
+}
+
+void* text_update(struct Element_S* self)
+{
+
 }
 
 void element_free(struct Element_S* self) {

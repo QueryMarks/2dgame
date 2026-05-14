@@ -6,9 +6,16 @@
 #include "collider.h"
 #include "enemy.h"
 
+#include "player.h"
+
 #include "spike.h"
 #include "damagezone.h"
 #include "speaker.h"
+#include "tnt.h"
+#include "wall.h"
+#include "current.h"
+#include "quest.h"
+#include "eventer.h"
 
 void level_tile_layer_build(Level* level) {
 	if (!level) return;
@@ -153,14 +160,16 @@ void level_save(Level* level)
 	sj_object_insert(ljson, "entities", entities);
 	slog("we got before player spawn");
 
-	SJson* player_spawn_x = sj_new_float(64.0);
-	SJson* player_spawn_y = sj_new_float(256.0);
+	
+
+	SJson* player_spawn_x = sj_new_float(player_get()->position.x);
+	SJson* player_spawn_y = sj_new_float(player_get()->position.y);
 	sj_object_insert(ljson, "player_spawn_x", player_spawn_x);
 	sj_object_insert(ljson, "player_spawn_y", player_spawn_y);
 
 	slog("wrote the player spawn");
 	sj_object_insert(json, "level", ljson);
-	sj_save(json, "working.json");
+	sj_save(json, "maps/editor_level.json");
 	slog("wrote the json");
 	sj_object_free(json);
 }
@@ -309,7 +318,7 @@ Level* level_load(const char* filename)
 		}
 		else if (strcmp(entity_name, "damagezone") == 0) {
 			if (entity_position_x != NULL && entity_position_y != NULL) {
-				damagezone_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), 40, gfc_vector2d(64, 64));
+				damagezone_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), 40, gfc_vector2d(128, 128));
 			}
 		}
 		else if (strcmp(entity_name, "speaker") == 0) {
@@ -317,6 +326,48 @@ Level* level_load(const char* filename)
 				speaker_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y));
 			}
 		}
+		else if (strcmp(entity_name, "tnt") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				tnt_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y));
+			}
+		}
+		else if (strcmp(entity_name, "wall_explosive") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				wall_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y),2, gfc_vector2d(64, 128));
+			}
+		}
+		else if (strcmp(entity_name, "wall_melee") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				wall_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), 1, gfc_vector2d(64, 128));
+			}
+		}
+		else if (strcmp(entity_name, "current") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				current_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), gfc_vector2d(0, 1), gfc_vector2d(64, 128));
+			}
+		}
+		else if (strcmp(entity_name, "quest_jump") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				quester_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), QUEST_JUMP);
+			}
+		}
+		else if (strcmp(entity_name, "quest_floater") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				quester_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), QUEST_FLOATER);
+			}
+		}
+		else if (strcmp(entity_name, "quest_talk") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				quester_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), QUEST_TALK);
+			}
+		}
+		else if (strcmp(entity_name, "quest_talk_to") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				quester_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), -1);
+			}
+		}
+
+
 		free(entity_position_x);
 		free(entity_position_y);
 		

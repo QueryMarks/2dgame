@@ -29,9 +29,13 @@
 
 #include "game.h"
 
+#include "eventer.h"
+
+#include "audio.h"
+#include "quest.h"
+
 static Game_Manager game_manager = { 0 };
-
-
+static Game_State_Info game_state_info = { 0 };
 
 int get_gamestate() {
     return game_manager.gamestate;
@@ -40,6 +44,7 @@ int get_gamestate() {
 
 void game_start_title() {
 
+    audio_music_play("audio/moonsong.mp3");
     game_manager.gamestate = GS_TITLE;
     slog("title start");
     Window* window = window_new();
@@ -52,18 +57,27 @@ void game_start_title() {
         gfc_vector2d(64, 64),
         onclick_start_level
     );
+    text_new(
+        window,
+        gfc_vector2d(200, 100),
+        gfc_vector2d(600, 60),
+        "begin game!!"
+    );
     slog("made the window moment");
+    
 
 
 
 }
 
 
-
+void game_level_to_level();
 
 
 void game_start_level(const char* path) {
     //window_new();
+
+    audio_music_play("audio/living_waterway.mp3");
     collider_manager_init(1024, false);
     //collider_manager_init(1024, true);
     entity_manager_init(1024);
@@ -73,7 +87,7 @@ void game_start_level(const char* path) {
     game_manager.level = level_load(path);
     level_setup_camera_bounds(game_manager.level);
 
-    game_manager.player = player_entity_new(gfc_vector2d(100, 100));
+    game_manager.player = player_entity_new(game_manager.level->playerSpawn);
     //enemy_entity_new(gfc_vector2d(400, 100));
     /*enemy_entity_new(gfc_vector2d(800, 300));
 
@@ -82,7 +96,7 @@ void game_start_level(const char* path) {
     turret_enemy_entity_new(gfc_vector2d(1400, 500));
     bruiser_enemy_entity_new(gfc_vector2d(1500, 100));
     */
-    wall_entity_new(gfc_vector2d(64 * 31, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
+    /*wall_entity_new(gfc_vector2d(64 * 31, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
     wall_entity_new(gfc_vector2d(64 * 32, 64 * 10), EXPLOSIVE, gfc_vector2d(64, 128));
     wall_entity_new(gfc_vector2d(64 * 31, 64 * 8), MELEE, gfc_vector2d(64, 128));
     wall_entity_new(gfc_vector2d(64 * 32, 64 * 8), MELEE, gfc_vector2d(64, 128));
@@ -97,6 +111,9 @@ void game_start_level(const char* path) {
     tnt_entity_new(gfc_vector2d(64 * 52, 64 * 13));
     damagezone_entity_new(gfc_vector2d(64 * 56, 64 * 10), 0.1f, gfc_vector2d(256, 256));
     speaker_entity_new(gfc_vector2d(64 * 60, 64 * 13));
+    */
+    
+    quest_init("saves/save.json");
     slog("loaded entire level");
     window_manager_init(32);
 
@@ -131,7 +148,6 @@ void game_to_title() {
 void run_maingame()
 {
     //ETHELYN think + update all
-    slog("running maingame");
     collider_manager_check_collisions();
     entity_manager_think_all();
     entity_manager_update_all();
@@ -161,12 +177,26 @@ void run_maingame()
     }
 }
 
+void game_level_to_level()
+{
+    game_state_info.player_health = player_get()->health;
+    game_state_info.player_weapon = (int)player_get()->data;
+    window_manager_close();
+    entity_manager_close();
+    collider_manager_close();
+    game_start_level("maps/testlevel_standard.json");
+    player_get()->health = game_state_info.player_health;
+    player_get()->data = game_state_info.player_weapon;
+}
+
+
 void onclick_editor_entity_cycle() {
     editor_change_entity();
 }
 
 
 void game_edit_level(const char* path) {
+    audio_music_play("audio/geothermal.mp3");
     editor_init();
     collider_manager_init(1024, false);
     //collider_manager_init(1024, true);
@@ -311,6 +341,10 @@ int main(int argc, char * argv[])
     gfc_input_init("config/input.cfg");
     window_manager_init(32);
     mouse = gf2d_sprite_load_all("images/pointer2.png", 32, 32, 16, 0);
+
+
+
+    audio_init();
     /*demo setup*/
     //start_maingame();
     game_start_title();

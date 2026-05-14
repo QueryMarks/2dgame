@@ -43,7 +43,6 @@ Entity* speaker_entity_new(GFC_Vector2D position)
 	self->data = timer;
 	self->solid = 0;
 	self->removeme = 0;
-	slog("finished becoming speaker");
 }
 
 void speaker_think(Entity* self) {

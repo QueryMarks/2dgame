@@ -3,6 +3,7 @@
 
 #include "collider.h"
 #include "shot.h"
+#include "audio.h"
 
 float shot_speed = 4;
 GFC_Vector2D velocity;
@@ -52,7 +53,7 @@ Entity* shot_entity_new(GFC_Vector2D position, GFC_Vector2D direction, float dam
 	}
 
 
-
+	
 	return self;
 	slog("I LIVE");
 }
@@ -90,6 +91,7 @@ void shot_free(Entity*self) {
 }
 
 void shot_explode(Entity* self) {
+	audio_sfx_play("audio/sfx/bomb2.wav");
 	GFC_Vector2D shotpoint;
 	gfc_vector2d_add(shotpoint, self->position, gfc_vector2d(-16*5 + (self->facing * 16*5), -16*5));
 	//gfc_vector2d_add(shotpoint, shotpoint, gfc_vector2d(-16, -16));

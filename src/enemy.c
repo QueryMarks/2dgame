@@ -6,6 +6,7 @@
 #include "player.h"
 #include "collider.h"
 #include "shot.h"
+#include "quest.h"
 
 
 void enemy_think(Entity* self);
@@ -27,7 +28,7 @@ Entity* enemy_entity_new(GFC_Vector2D position)
 	}
 	self->entity_type = "swinger";
 	self->sprite = gf2d_sprite_load_all(
-		"images/space_bug_top.png",
+		"images/swinger.png",
 		128,
 		128,
 		16,
@@ -166,9 +167,14 @@ void enemy_collide(Entity* self, void* collider) {
 				}
 				Shot_Data* damager = collided->entity->data;
 				self->health -= damager->damage;
-
+				
 				if (self->health <= 0.0f) {
+					audio_sfx_play("audio/sfx/enemyhurt2.wav");
 					self->removeme = 1;
+				}
+				else
+				{
+					audio_sfx_play("audio/sfx/enemyhurt.wav");
 				}
 
 			}
@@ -376,10 +382,17 @@ void floater_enemy_collide(Entity* self, void* collider) {
 				self->health -= damager->damage;
 
 				if (self->health <= 0.0f) {
+					if (get_quest_progress(QUEST_FLOATER) == 1)
+					{
+						slog("floater quest");
+						set_quest_progress(QUEST_FLOATER, 2);
+					}
 					self->removeme = 1;
+					audio_sfx_play("audio/sfx/enemyhurt2.wav");
 				}
 				else
 				{
+					audio_sfx_play("audio/sfx/enemyhurt.wav");
 					int dir = 1;
 					if ((self->position.x - collided->entity->position.x) < 0) {
 						dir = -1;
@@ -531,10 +544,12 @@ void turret_enemy_collide(Entity* self, void* collider) {
 				self->health -= damager->damage;
 
 				if (self->health <= 0.0f) {
+					audio_sfx_play("audio/sfx/enemyhurt2.wav");
 					self->removeme = 1;
 				}
 				else
 				{
+					audio_sfx_play("audio/sfx/enemyhurt.wav");
 					int dir = 1;
 					if ((self->position.x - collided->entity->position.x) < 0) {
 						dir = -1;
@@ -701,10 +716,12 @@ void walky_enemy_collide(Entity* self, void* collider) {
 				self->health -= damager->damage;
 
 				if (self->health <= 0.0f) {
+					audio_sfx_play("audio/sfx/enemyhurt2.wav");
 					self->removeme = 1;
 				}
 				else
 				{
+					audio_sfx_play("audio/sfx/enemyhurt.wav");
 					int dir = 1;
 					if ((self->position.x - collided->entity->position.x) < 0) {
 						dir = -1;
@@ -875,10 +892,12 @@ void bruiser_enemy_collide(Entity* self, void* collider) {
 				self->health -= damager->damage;
 
 				if (self->health <= 0.0f) {
+					audio_sfx_play("audio/sfx/enemyhurt2.wav");
 					self->removeme = 1;
 				}
 				else
 				{
+					audio_sfx_play("audio/sfx/enemyhurt.wav");
 					int dir = 1;
 					if ((self->position.x - collided->entity->position.x) < 0) {
 						dir = -1;

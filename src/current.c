@@ -17,6 +17,7 @@ Entity* current_entity_new(GFC_Vector2D position, GFC_Vector2D direction, GFC_Ve
 		slog("failed to create current");
 		return NULL;
 	}
+	self->entity_type = "current";
 	self->sprite = gf2d_sprite_load_all(
 		"images/current.png",
 		64,

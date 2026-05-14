@@ -29,6 +29,13 @@ typedef struct Game_Manager_S {
 	int gamestate;
 }Game_Manager;
 
+
+typedef struct Game_State_Info_S
+{
+	float player_health;
+	int player_weapon;
+}Game_State_Info;
+
 void game_start_title();
 void game_title_exit();
 

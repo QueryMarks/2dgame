@@ -11,6 +11,10 @@
 
 #include "game.h"
 
+#include "audio.h"
+
+#include "quest.h"
+
 void player_think(Entity *self);
 
 void player_update(Entity *self);
@@ -39,6 +43,11 @@ int can_buoying = 0;
 
 int weapon = 0;
 int weaponmax = 9;
+
+
+const char* jumpsfx = "audio/sfx/jump.wav";
+const char* buoysfx = "audio/sfx/jump2.wav";
+const char* floatsfx = "audio/sfx/float.wav";
 
 Entity *player_entity_new(GFC_Vector2D position)
 {
@@ -189,8 +198,14 @@ void player_think(Entity* self) {
 	if (gfc_input_key_pressed("l")) {
 		if (collider_manager_check_static_collisions(ground_check_rect).h != 0) {
 			self->velocity.y = -4;
+			audio_sfx_play(jumpsfx);
+			int jump_quest = get_quest_progress(QUEST_JUMP);
+			if (jump_quest > 0 && jump_quest < 11) {
+					add_quest_progress(QUEST_JUMP, 1);
+			}
 		}
 		else if (can_buoying == 1) {
+			audio_sfx_play(buoysfx);
 			self->velocity.y = 0;
 			buoy_timer = 60;
 			can_buoying = 0;
@@ -200,7 +215,12 @@ void player_think(Entity* self) {
 	else
 	{
 		//float/gravity checking
-		if (gfc_input_key_down("w") && float_timer > 0) {
+		if (gfc_input_key_down("w") && float_timer > 0 && collider_manager_check_static_collisions(ground_check_rect).h == 0) {
+			if (gfc_input_key_pressed("w"))
+			{
+				audio_sfx_play(floatsfx);
+			}
+			
 			float_timer -= 1;
 			self->velocity.y = 0.1;
 		}
@@ -243,6 +263,7 @@ void player_think(Entity* self) {
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
 			shot_entity_new(shotpoint, gfc_vector2d(self->facing, 0),5.0f,0,3000000);
+			audio_sfx_play("audio/sfx/basicshot.wav");
 		}
 		//TRIPLET
 		else if (weapon == 1)
@@ -253,6 +274,7 @@ void player_think(Entity* self) {
 			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0), 5.0f, 0, 20);
 			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, 0.3),5.0f, 0, 20);
 			shot_entity_new(shotpoint, gfc_vector2d(self->facing*3, -0.3),5.0f, 0, 20);
+			audio_sfx_play("audio/sfx/trishot.wav");
 		}
 		//TWOSIDE
 		else if (weapon == 2) {
@@ -261,6 +283,7 @@ void player_think(Entity* self) {
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-16, -16));
 			shot_entity_new(shotpoint, gfc_vector2d(self->facing * 0.5, 0), 5.0f, 0, 300);
 			shot_entity_new(shotpoint, gfc_vector2d(self->facing * -0.5, 0), 5.0f, 0, 300);
+			audio_sfx_play("audio/sfx/shot.wav");
 		}
 		//BIGSHOT
 		else if (weapon == 3) {
@@ -272,6 +295,8 @@ void player_think(Entity* self) {
 			Collider* shotcollider = shot->collider;
 			shotcollider->rect.w *= 2;
 			shotcollider->rect.h *= 2;
+			audio_sfx_play("audio/sfx/bigshot.wav");
+			
 		}
 		//SWORDITUDE
 		else if (weapon == 4) {
@@ -283,6 +308,8 @@ void player_think(Entity* self) {
 			Collider* shotcollider = shot->collider;
 			shotcollider->rect.w *= 2;
 			shotcollider->rect.h *= 3;
+			audio_sfx_play("audio/sfx/sworditude.wav");
+
 
 		}
 		//SEALASER
@@ -296,6 +323,8 @@ void player_think(Entity* self) {
 			shotcollider->rect.w *= 500;
 			shotcollider->rect.h *= 0.1;
 
+			audio_sfx_play("audio/sfx/sealaser.wav");
+
 		}
 		//BUBBLE BOMB
 		else if (weapon == 6) {
@@ -303,6 +332,8 @@ void player_think(Entity* self) {
 			GFC_Vector2D shotpoint;
 			gfc_vector2d_add(shotpoint, gfc_rect_get_center_point(collider->rect), gfc_vector2d(-32 + (self->facing * 32), 0));
 			Entity* shot = shot_entity_new(shotpoint, gfc_vector2d(self->facing, -0.25), 1.0f, EXPLOSIVE, 600);
+
+			audio_sfx_play("audio/sfx/bomb1.wav");
 
 		}
 
@@ -373,7 +404,7 @@ void player_collide(Entity* self, void* collider) {
 				Shot_Data *shot_data = other->entity->data;
 				damage = shot_data->damage;
 			}
-			
+			audio_sfx_play("audio/sfx/hurt.wav");
 			self->health -= damage;
 			if (self->health <= 0){
 				//return to the title screen

@@ -59,6 +59,13 @@ Element* button_new(
 	GFC_Vector2D size,
 	void* onclick);
 
+Element* text_new(
+	Window* window,
+	GFC_Vector2D position,
+	GFC_Vector2D size,
+	const char* text
+);
+
 
 
 void element_draw(Element* self);

@@ -31,7 +31,6 @@ void entity_manager_init(Uint32 max)
 	}
 	entityManager.entityMax = max;
 	atexit(entity_manager_close);
-	slog("initialized entity system");
 }
 
 void entity_manager_close()
@@ -69,7 +68,6 @@ Entity *entity_new()
 		entityManager.entityList[i].scale.y = 1;
 		entityManager.entityList[i].postupdate = postupdate;
 		entityManager.entityList[i].entity_type = "EMPTY_ENTITY";
-		slog(entityManager.entityList[i].entity_type);
 		return &entityManager.entityList[i];
 	}
 	return NULL;
@@ -104,17 +102,15 @@ SJson* entities_for_json() {
 		slog("entity system has not been initialized!");
 		return NULL;
 	}
-	slog("about to make sjson");
 	SJson* entities = sj_array_new();
 	for (int i = 0; i < entityManager.entityMax; i++) {
-		slog("we're comparing strings");
 		if (entityManager.entityList[i]._inuse != 1)continue;
 		if (strcmp(entityManager.entityList[i].entity_type, "player") == 0
 			|| strcmp(entityManager.entityList[i].entity_type, "shot") == 0
 			|| strcmp(entityManager.entityList[i].entity_type, "EMPTY_ENTITY")==0)continue;
-		slog("we compared strings");
 
 		SJson* entity_json = sj_object_new();
+		slog(entityManager.entityList[i].entity_type);
 		SJson* entity = sj_new_str(entityManager.entityList[i].entity_type);
 		SJson* pos_x = sj_new_float(entityManager.entityList[i].position.x);
 		SJson* pos_y = sj_new_float(entityManager.entityList[i].position.y);
@@ -124,7 +120,6 @@ SJson* entities_for_json() {
 		sj_object_insert(entity_json, "pos_y", pos_y);
 		sj_array_append(entities, entity_json);
 	}
-	slog("returning entity array json");
 	return entities;
 }
 
