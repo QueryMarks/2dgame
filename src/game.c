@@ -46,7 +46,6 @@ void game_start_title() {
 
     audio_music_play("audio/moonsong.mp3");
     game_manager.gamestate = GS_TITLE;
-    slog("title start");
     Window* window = window_new();
     Sprite* buttonSprite = gf2d_sprite_load_all("images/floater.png", 64, 64, 1, 1);
     button_new
@@ -63,15 +62,7 @@ void game_start_title() {
         gfc_vector2d(600, 60),
         "begin game!!"
     );
-    slog("made the window moment");
-    
-
-
-
 }
-
-
-void game_level_to_level();
 
 
 void game_start_level(const char* path) {
@@ -114,7 +105,6 @@ void game_start_level(const char* path) {
     */
     
     quest_init("saves/save.json");
-    slog("loaded entire level");
     window_manager_init(32);
 
 
@@ -157,7 +147,7 @@ void run_maingame()
         //backgrounds drawn first
     level_draw(game_manager.level);
     entity_manager_draw_all();
-    collider_manager_draw_all();
+    //collider_manager_draw_all();
 
     char buffer[32];
     if (game_manager.player->_inuse == 1)
@@ -177,14 +167,20 @@ void run_maingame()
     }
 }
 
-void game_level_to_level()
+void game_level_to_level(const char* level)
+{
+    game_manager.level_to_level = level;
+    game_manager.gamestate = GS_L2L;
+}
+
+void game_level_to_level_transition()
 {
     game_state_info.player_health = player_get()->health;
     game_state_info.player_weapon = (int)player_get()->data;
     window_manager_close();
     entity_manager_close();
     collider_manager_close();
-    game_start_level("maps/testlevel_standard.json");
+    game_start_level(game_manager.level_to_level);
     player_get()->health = game_state_info.player_health;
     player_get()->data = game_state_info.player_weapon;
 }
@@ -214,7 +210,6 @@ void game_edit_level(const char* path) {
     camera_enable_binding(0);
 }
 void game_start_editor() {
-    slog("started editor");
     game_edit_level("maps/template.json");
 }
 
@@ -377,6 +372,10 @@ int main(int argc, char * argv[])
         else  if (game_manager.gamestate == GS_EDITOR)
         {
             game_run_editor();
+        }
+        else if (game_manager.gamestate == GS_L2L && game_manager.level != NULL)
+        {
+            game_level_to_level_transition();
         }
 
 

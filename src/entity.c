@@ -41,14 +41,12 @@ void entity_manager_close()
 	{
 		if (&entityManager.entityList[i]._inuse == 1)
 		{
-			slog("freed 1 entity lololol");
 			entity_free(&entityManager.entityList[i]);
 		}
 		
 	}
 	free(entityManager.entityList);
 	memset(&entityManager,0,sizeof(EntityManager));
-	slog("closed entity system");
 }
 
 Entity *entity_new()
@@ -110,7 +108,6 @@ SJson* entities_for_json() {
 			|| strcmp(entityManager.entityList[i].entity_type, "EMPTY_ENTITY")==0)continue;
 
 		SJson* entity_json = sj_object_new();
-		slog(entityManager.entityList[i].entity_type);
 		SJson* entity = sj_new_str(entityManager.entityList[i].entity_type);
 		SJson* pos_x = sj_new_float(entityManager.entityList[i].position.x);
 		SJson* pos_y = sj_new_float(entityManager.entityList[i].position.y);
@@ -189,11 +186,9 @@ void clear_entities_at_point(GFC_Vector2D point)
 {
 	for (int i = 0; i < entityManager.entityMax; i++)
 	{
-		slog("we're talkin about clearing some entities");
 		if (entityManager.entityList[i]._inuse == 1)
 		{
 			if (strcmp(entityManager.entityList[i].entity_type, "player") != 0) {
-				slog("we're making the rect.");
 				GFC_Rect rect = gfc_rect(entityManager.entityList[i].position.x, entityManager.entityList[i].position.y, 64, 64);
 				if (gfc_point_in_rect(point, rect)) {
 					entityManager.entityList[i].free(&entityManager.entityList[i]);

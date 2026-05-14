@@ -19,7 +19,8 @@
 enum Gamestate_E{
 	GS_TITLE,
 	GS_MAIN,
-	GS_EDITOR
+	GS_EDITOR,
+	GS_L2L
 };
 
 typedef struct Game_Manager_S {
@@ -27,6 +28,7 @@ typedef struct Game_Manager_S {
 	Entity* player;
 	int time;
 	int gamestate;
+	const char* level_to_level;
 }Game_Manager;
 
 
@@ -40,5 +42,6 @@ void game_start_title();
 void game_title_exit();
 
 void game_start_level(const char* path);
+void game_level_to_level(const char* level);
 
 int get_gamestate();

@@ -24,7 +24,6 @@ void level_tile_layer_build(Level* level) {
 	GFC_Vector2D position;
 	Uint32 frame;
 
-	slog("level is real");
 
 
 	if (level->tileLayer) {
@@ -67,7 +66,6 @@ void level_tile_layer_build(Level* level) {
 		}
 	}
 	level->tileLayer->texture = SDL_CreateTextureFromSurface(gf2d_graphics_get_renderer(), level->tileLayer->surface);
-	slog("finished making level texture");
 	if (!level->tileLayer->texture) {
 		slog("failed to load texture from level tile layer surface");
 		return;
@@ -83,7 +81,6 @@ void level_collision_layer_build(Level* level) {
 	int i, j, index;
 	GFC_Vector2D position;
 
-	slog("level is real");
 
 	for (j = 0; j < level->tileMapHeight; j++) {
 		for (i = 0; i < level->tileMapWidth; i++) {
@@ -98,7 +95,6 @@ void level_collision_layer_build(Level* level) {
 		}
 	}
 	level->tileLayer->texture = SDL_CreateTextureFromSurface(gf2d_graphics_get_renderer(), level->tileLayer->surface);
-	slog("finished making level collisions");
 }
 
 SJson* entityJson(const char* type, GFC_Vector2D pos)
@@ -132,7 +128,7 @@ void level_save(Level* level)
 	SJson* frames_per_line = sj_new_int(1);
 	sj_object_insert(ljson, "frames_per_line", frames_per_line);
 
-	slog("we made it to tilemap");
+
 	SJson* tileMap = sj_array_new();
 	for (int i = 0; i < level->tileMapHeight; i++)
 	{
@@ -140,7 +136,6 @@ void level_save(Level* level)
 		for (int j = 0; j < level->tileMapWidth; j++)
 		{
 			Uint8 tile = level->tileMap[j + (i*level->tileMapWidth)];
-			slog("doing tile %i", tile);
 			SJson* mapValue = sj_new_uint8(tile);
 			sj_array_append(tileMapRow, mapValue);
 		}
@@ -148,17 +143,13 @@ void level_save(Level* level)
 	}
 
 	sj_object_insert(ljson, "tileMap", tileMap);
-	slog("wrote tilemap");
 
-
-
-	slog("we got before entities");
 	
 
 
 	SJson* entities = entities_for_json();
 	sj_object_insert(ljson, "entities", entities);
-	slog("we got before player spawn");
+
 
 	
 
@@ -167,10 +158,10 @@ void level_save(Level* level)
 	sj_object_insert(ljson, "player_spawn_x", player_spawn_x);
 	sj_object_insert(ljson, "player_spawn_y", player_spawn_y);
 
-	slog("wrote the player spawn");
+
 	sj_object_insert(json, "level", ljson);
 	sj_save(json, "maps/editor_level.json");
-	slog("wrote the json");
+
 	sj_object_free(json);
 }
 
@@ -366,6 +357,12 @@ Level* level_load(const char* filename)
 				quester_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y), -1);
 			}
 		}
+		else if (strcmp(entity_name, "leveler") == 0) {
+			if (entity_position_x != NULL && entity_position_y != NULL) {
+				level_eventer_entity_new(gfc_vector2d(*entity_position_x, *entity_position_y));
+			}
+
+		}
 
 
 		free(entity_position_x);
@@ -373,7 +370,6 @@ Level* level_load(const char* filename)
 		
 	}
 	
-	slog("setting spawn");
 	///////player spawn////////
 	float* player_x = malloc(sizeof(float));
 	float* player_y = malloc(sizeof(float));
@@ -382,7 +378,7 @@ Level* level_load(const char* filename)
 	level->playerSpawn = gfc_vector2d(*player_x, *player_y);
 	free(player_x);
 	free(player_y);
-	slog("set spawn");
+
 	
 
 	sj_free(json);
@@ -497,12 +493,11 @@ void level_setup_camera_bounds(Level* level)
 {
 	if (!level) return;
 	if (!level->tileLayer) return;
-	slog("we are setting boundaries");
 	camera_set_bounds(gfc_rect(0, 0, level->tileLayer->surface->w,level->tileLayer->surface->h));
-	slog("finished doing that");
+
 	camera_apply_bounds();
 	camera_enable_binding(1);
-	slog("finished level_setup_camera_bounds()");
+
 }
 
 level_refresh_tiles(Level* level)

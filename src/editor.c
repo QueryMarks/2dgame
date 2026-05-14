@@ -33,18 +33,16 @@ enum {
 	ED_QUEST_JUMP,
 	ED_QUEST_FLOATER,
 	ED_QUEST_TALK,
-	ED_QUEST_TALK_TO
+	ED_QUEST_TALK_TO,
+	ED_LEVELER
 };
 
 void editor_init(Level* level)
 {
-	slog("started initializing editor");
 	_editor.entity_index = 0;
 	_editor.tile_index = 0;
 	Sprite* walky = gf2d_sprite_load_all("images/walky.png",64,64,1,1);
-	slog("before new list");
 	_editor.sprite_array = gfc_list_new();
-	slog("initialized sprite array");
 	gfc_list_append(_editor.sprite_array, walky);
 	gfc_list_append(_editor.sprite_array, gf2d_sprite_load_all("images/bruiser.png", 128, 128, 1, 1));
 	gfc_list_append(_editor.sprite_array, gf2d_sprite_load_image("images/turret.png"));
@@ -69,25 +67,25 @@ void editor_init(Level* level)
 	gfc_list_append(_editor.sprite_array, gf2d_sprite_load_image("images/eventer3.png"));
 
 	gfc_list_append(_editor.sprite_array, gf2d_sprite_load_image("images/eventer4.png"));
+	gfc_list_append(_editor.sprite_array, gf2d_sprite_load_image("images/leveler.png"));
 
 
-	slog("checkpoint 1 editor init");
 	Sprite* tiles = level->tileSet;
 
 	Window* level_editor_window = window_new();
 	level_editor_window->sprite = gf2d_sprite_load_all("images/editorbox.png", 450, 898, 1, 1);
 	level_editor_window->position = gfc_vector2d(798, 0);
-	slog("checkpoint 1.5");
+
 	_editor.entity_button =
 		button_new(level_editor_window, gfc_vector2d(100, 300), walky, gfc_vector2d(64, 64), editor_change_entity);
 	_editor.tile_button =
 		button_new(level_editor_window, gfc_vector2d(100, 500), tiles, gfc_vector2d(64, 64), editor_change_tile);
-	slog("checkpoint 2 editor init");
+
 	_editor.entities_max = _editor.sprite_array->count-1;
 	_editor.tiles_max = 4;
 	
 	_editor.level = level;
-	slog("initialized editor");
+
 }
 
 void editor_change_entity()
@@ -186,11 +184,14 @@ void editor_place_entity(GFC_Vector2D position) {
 	{
 		quester_entity_new(position, -1);
 	}
+	else if (_editor.entity_index == ED_LEVELER)
+	{
+		level_eventer_entity_new(position);
+	}
 }
 
 
 void editor_place_tile(int tile_x, int tile_y) {
-	slog("building tile at %i, %i", tile_x, tile_y);
 	int index = tile_x + (tile_y * _editor.level->tileMapWidth);
 	_editor.level->tileMap[index] = _editor.tile_index + 1;
 	level_refresh_tiles(_editor.level);

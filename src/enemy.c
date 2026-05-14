@@ -113,7 +113,6 @@ GFC_Vector2D enemy_check_move(Entity* self, GFC_Vector2D move_position) {
 
 void enemy_think(Entity* self) {
 	if (!self) {
-		slog("enemies don't exist anymore");
 		return;
 	}
 	Entity* my_player = player_get();
@@ -314,7 +313,6 @@ void floater_enemy_think(Entity* self) {
 			self->velocity.y = (my_player->position.y - self->position.y) * 0.01f - 1.5f;
 			self->velocity.x = (my_player->position.x - self->position.x) * 0.01f;
 			enemy_data->timer = 30;
-			slog("jumped");
 		}
 		else
 		{
@@ -384,7 +382,6 @@ void floater_enemy_collide(Entity* self, void* collider) {
 				if (self->health <= 0.0f) {
 					if (get_quest_progress(QUEST_FLOATER) == 1)
 					{
-						slog("floater quest");
 						set_quest_progress(QUEST_FLOATER, 2);
 					}
 					self->removeme = 1;

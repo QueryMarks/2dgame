@@ -6,6 +6,8 @@
 #include "gui.h"
 #include "quest.h"
 
+#include "game.h"
+
 void eventer_think(Entity* self);
 void eventer_update(Entity* self);
 void eventer_collide(Entity* self, void* collider);
@@ -42,6 +44,22 @@ Entity* eventer_entity_new(GFC_Vector2D position, GFC_Vector2D size, Sprite* spr
 	return self;
 }
 
+void level_ontouch() {
+	game_level_to_level("maps/testlevel_standard.json");
+}
+
+Entity* level_eventer_entity_new(GFC_Vector2D position)
+{
+	Sprite* sprite = gf2d_sprite_load_all("images/leveler.png", 64, 64, 1, 1);
+	Entity* myLevelTransition = eventer_entity_new(
+		position,
+		gfc_vector2d(64, 64),
+		sprite,
+		level_ontouch
+	);
+	myLevelTransition->entity_type = "leveler";
+}
+
 Entity* quester_entity_new(GFC_Vector2D position, int quest) {
 	Entity* myQuester = NULL;
 	if (quest == QUEST_JUMP)
@@ -68,7 +86,6 @@ Entity* quester_entity_new(GFC_Vector2D position, int quest) {
 		myQuester = eventer_entity_new(position, gfc_vector2d(64, 64), eventersprite, quest_interact_talk2);
 		myQuester->entity_type = "quest_talk_to";
 	}
-	slog("i'm quester and i exist");
 	return myQuester;
 	
 	

@@ -22,7 +22,6 @@ static WindowManager windowManager = { 0 };
 void window_manager_init(Uint32 max)
 {
 
-	slog("initializing window system");
 	if (!max) {
 		slog("no window max for manager");
 		return;
@@ -38,13 +37,11 @@ void window_manager_init(Uint32 max)
 	windowManager.background = gf2d_sprite_load_all("images/dialoguebox.png", 950, 256, 1, 1);
 	SDL_SetTextureAlphaMod(windowManager.background->texture, 100);
 	atexit(window_manager_close);
-	slog("initialized window system");
 }
 
 
 void window_manager_close()
 {
-	slog("we're closin da windo");
 	int i;
 	if (!windowManager.windowList)return;
 
@@ -55,13 +52,11 @@ void window_manager_close()
 	}
 	free(windowManager.windowList);
 	memset(&windowManager, 0, sizeof(WindowManager));
-	slog("closed window system");
 }
 
 Window* window_new() {
 	int i;
 	if (!windowManager.windowList) {
-		slog("window system has not yet been initialized");
 		return NULL;
 	}
 	for (i = 0; i < windowManager.windowMax; i++) {

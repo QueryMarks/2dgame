@@ -11,7 +11,7 @@ void audio_init() {
 	Mix_Init(MIX_INIT_MP3);
 	if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
 	{
-		slog("oops it did no work");
+		slog("mixer audio failed to init");
 		return;
 	}
 }

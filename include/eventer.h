@@ -14,5 +14,6 @@ typedef struct EventerData_S {
 }EventerData;
 
 Entity* quester_entity_new(GFC_Vector2D position, int quest);
+Entity* level_eventer_entity_new(GFC_Vector2D position);
 
 #endif

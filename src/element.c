@@ -95,9 +95,7 @@ Element* text_new(
 
 
 		window->elements[i].update = text_update;
-		
-		slog("made it to ttf init");
-		
+				
 		if (TTF_Init() != 0) {
 			slog("something's wrong with the ttf diffuser");
 			TTF_Quit();

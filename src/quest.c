@@ -31,7 +31,6 @@ void quest_init(const char* filename) {
 			sj_get_integer_value(quest_json, &quest_val);
 			_quest_tracker.quest_progress[i] = quest_val;
 		}
-		slog("done setting quest progresses");
 	}
 	else {
 		slog("no json found");
@@ -87,7 +86,6 @@ void quest_interact_jump(Entity* entity) {
 		}
 		else if (_quest_tracker.quest_progress[QUEST_JUMP] < 11)
 		{
-			slog("quest not yet done");
 		}
 		else if (_quest_tracker.quest_progress[QUEST_JUMP] == 11)
 		{
@@ -143,7 +141,6 @@ void quest_interact_floater(Entity* entity) {
 		}
 		else if (_quest_tracker.quest_progress[QUEST_FLOATER] < 2)
 		{
-			slog("quest not yet done");
 		}
 		else if (_quest_tracker.quest_progress[QUEST_FLOATER] == 2)
 		{
@@ -199,7 +196,6 @@ void quest_interact_talk1(Entity* entity) {
 		}
 		else if (_quest_tracker.quest_progress[QUEST_TALK] < 2)
 		{
-			slog("quest not yet done");
 		}
 		else if (_quest_tracker.quest_progress[QUEST_TALK] == 2)
 		{

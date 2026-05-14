@@ -55,7 +55,6 @@ Entity* shot_entity_new(GFC_Vector2D position, GFC_Vector2D direction, float dam
 
 	
 	return self;
-	slog("I LIVE");
 }
 
 void shot_think(Entity* self) {

@@ -72,7 +72,6 @@ void wall_collide(Entity* self, void*collider)
 			Shot_Data* damager = collided->entity->data;
 			int my_type = (int)self->data;
 			if (damager->type == my_type) {
-				slog("I'VE BEEN HIT!");
 				self->removeme = 1;
 			}
 		}

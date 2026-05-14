@@ -355,7 +355,6 @@ Entity* player_get() {
 void player_update(Entity* self) {
 	if (!self) return;
 	if (self->removeme == 1) {
-		slog("I'M DEAD AS A DOORNAIL!!!");
 	}
 	GFC_Vector2D new_position = gfc_vector2d(self->position.x + self->velocity.x, self->position.y + self->velocity.y);
 	if (self->collider) {
